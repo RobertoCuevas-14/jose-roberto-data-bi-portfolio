@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Urban Mobility & Economic Productivity Analysis</title>
+    <style>
+      body {
+        margin: 0;
+        background: #f6f7f9;
+        color: #111827;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      header {
+        background: #111827;
+        color: white;
+        padding: 34px clamp(20px, 5vw, 70px);
+      }
+      header p {
+        color: #cbd5e1;
+        max-width: 900px;
+      }
+      main {
+        display: grid;
+        gap: 16px;
+        padding: 28px clamp(20px, 5vw, 70px) 60px;
+      }
+      .cell {
+        background: white;
+        border: 1px solid #d9dee8;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .label {
+        background: #e2e8f0;
+        color: #334155;
+        font-size: 0.78rem;
+        font-weight: 800;
+        padding: 8px 14px;
+        text-transform: uppercase;
+      }
+      .markdown p {
+        line-height: 1.7;
+        margin: 0;
+        padding: 16px;
+      }
+      pre {
+        background: #111827;
+        color: #e5e7eb;
+        line-height: 1.55;
+        margin: 0;
+        overflow: auto;
+        padding: 16px;
+      }
+      code {
+        font-family: Consolas, "Liberation Mono", ui-monospace, monospace;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Urban Mobility & Economic Productivity Analysis</h1>
+      <p>Vista HTML del notebook para revisión rápida en portafolio. El archivo .ipynb completo también está incluido como evidencia técnica.</p>
+    </header>
+    <main>
+      <section class='cell markdown'><div class='label'>Markdown</div><p># ¡Hola Roberto! &lt;a class=&quot;tocSkip&quot;&gt;&lt;/a&gt; Mi nombre es Oscar Flores y tengo el gusto de revisar tu proyecto. Si tienes algún comentario que quieras agregar en tus respuestas te puedes referir a mi como Oscar, no hay problema que me trates de tú. Si veo un error en la primera revisión solamente lo señalaré y dejaré que tú encuentres de qué se trata y cómo arreglarlo. Debo prepararte para que te desempeñes como especialista en Data, en un trabajo real, el responsable a cargo tuyo hará lo mismo. Si aún tienes dificultades para resolver esta tarea, te daré indicaciones más precisas en una siguiente iteración. Te dejaré mis comentarios más abajo - **por favor, no los muevas, modifiques o borres** Comenzaré mis comentarios con un resumen de los puntos que están bien, aquellos que debes corregir y aquellos que puedes mejorar. Luego deberás revisar todo el notebook para leer mis comentarios, los cuales estarán en rectángulos de color verde, amarillo o rojo como siguen: &lt;div class=&#x27;alert alert-block alert-success&#x27;&gt; &lt;b&gt;Comentario de Reviewer&lt;/b&gt; &lt;a class=&#x27;tocSkip&#x27;&gt;&lt;/a&gt; Muy bien! Toda la respuesta fue lograda satisfactoriamente. &lt;/div&gt; &lt;div class=&#x27;alert alert-block alert-warning&#x27;&gt; &lt;b&gt;Comentario de Reviewer&lt;/b&gt; &lt;a class=&#x27;tocSkip&#x27;&gt;&lt;/a&gt; Existen detalles a mejorar. Existen recomendaciones. &lt;/div&gt; &lt;div class=&#x27;alert alert-block alert-danger&#x27;&gt; &lt;b&gt;Comentario de Reviewer&lt;/b&gt; &lt;a class=&#x27;tocSkip&#x27;&gt;&lt;/a&gt; Se necesitan correcciones en el bloque. El trabajo no puede ser aceptado con comentarios en rojo sin solucionar. &lt;/div&gt; Cualquier comentario que quieras agregar entre iteraciones de revisión lo puedes hacer de la siguiente manera: &lt;div class=&#x27;alert alert-block alert-info&#x27;&gt; &lt;b&gt;Respuesta estudiante.&lt;/b&gt; &lt;a class=&#x27;tocSkip&#x27;&gt;&lt;/a&gt; Hola, buenas tardes una disculpa por apenas comunicarme hice algunos cambios pero lo de las gráficas al moverlas se me movieron otras cosas me pudiera indicar cuales fueron siento que le movi a todo el proyecto y la verdad quiero entregarlo con las correcciones para que me lo revisen y pueda entregarlo bien &lt;/div&gt; Mucho éxito en el proyecto!</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>## Resumen de la revisión v1 &lt;a class=&quot;tocSkip&quot;&gt;&lt;/a&gt;</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>----</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>## Introducción Como analista de datos, tu objetivo es **evaluar cómo la movilidad urbana se relaciona con la productividad económica en las principales ciudades latinoamericanas**. Para ello trabajarás con datos reales de TomTom Traffic Index y OECD Cities, que deberás limpiar, combinar y analizar para identificar en qué ciudades conviene invertir en infraestructura de transporte.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>## 🧩 Paso 1: Cargar y explorar Antes de limpiar o combinar los datos, es necesario **familiarizarte con la estructura de ambos datasets**. En esta etapa, validarás que los archivos se carguen correctamente, conocerás sus columnas y tipos de datos, y detectarás posibles inconsistencias. ### 1.1 Carga de datos y vista rápida **🎯Objetivo:** Importar las librerías necesarias, cargar los archivos CSV en DataFrames y realizar una revisión preliminar para entender su contenido. **Instrucciones:** - Importa las librerías `pandas`, `numpy`, `seaborn` y `matplotlib.pyplot`. - Carga los archivos usando `pd.read_csv()`: - `&#x27;/datasets/tomtom_traffic.csv&#x27;` - `/datasets/oecd_city_economy.csv` `. - Guarda los DataFrames en las variables `traffic` y `eco`. - Muestra las primeras 5 filas de cada DataFrame.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># importar librerías
+import pandas as pd
+import numpy as py
+import seaborn as sns
+import matplotlib.pyplot as plt</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># cargar archivos
+traffic = pd.read_csv(&#x27;/datasets/tomtom_traffic.csv&#x27;)
+eco = pd.read_csv(&#x27;/datasets/oecd_city_economy.csv&#x27;)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># mostrar las primeras 5 filas de traffic
+traffic.head()</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># mostrar las primeras 5 filas de eco
+eco.head()</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>**Tip:** Si no usas `print()` la tabla se vera mejor.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- ## 🧩Paso 2: Explorar, limpiar y preparar los datos Antes de combinar los datasets, inspecciona su estructura, tipos de datos, columnas y valores faltantes. Anota las columnas que necesiten limpieza y luego estandariza los nombres de columnas. ### 2.1 Explorar la estructura y tipos de datos **🎯Objetivo:** Identificar columnas con tipos incorrectos, distribución y nulos, anotar las columnas que requieren conversión. **Instrucciones:** - Usa `.info()` para conocer la estructura de ambos DataFrames. - Muestra los primeros 3 renglones de cada DF. - Identifica si los detalles de cada DF estan bien o si requieren correcciones y escribe tus conclusiones en el bloque Markdown. - ¿Hay columnas que requieren conversión?¿ Cuáles son? ¿Que tipo de dato ienen y cuál deberían de tener? - ¿Hay datos ausentes en alguna columna?</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Examinar la estructura de traffic
+traffic.info()
+traffic.head(3)</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>En la estructura del DF traffic, se observa que: - Las columnas `UpdateTimeUTC` y `UpdateTimeUTCWeekAgo` son de tipo `object`, pero deberían convertirse a tipo `datetime` para facilitar análisis temporales y extracción de fechas o años. - Sin datos ausentes</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Examinar la estructura de eco
+eco.info()
+eco.head(3)</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>En la estructura del DF eco, se observa que: - Las columnas `City GDP/capita`, `Unemployment %`, `PM2.5 (μg/m³)` y `Population (M)` aparecen como tipo `object`, pero deberían convertirse a tipos numéricos (`float`) para poder realizar cálculos y análisis estadísticos. - Sin datos ausentes</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>### 2.2 Renombrar columnas **🎯Objetivo:** Estandarizar los nombres de columnas para evitar errores y facilitar la unión de los datasets. **Instrucciones:** - Cambia los nombres de las columnas para que tengan el formato `snake_case`. - `Country` → `country` - `UpdateTimeUTC` → `update_time_utc` - Verifica que los cambios se hayan aplicado correctamente usando `.columns`.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Estandarizar los nombres de las columnas de traffic
+#tu código aquí
+traffic = traffic.rename(columns={
+    &quot;Country&quot;: &quot;country&quot;,
+    &quot;City&quot;: &quot;city&quot;,
+    &quot;UpdateTimeUTC&quot;: &quot;update_time_utc&quot;,
+    &quot;UpdateTimeUTCWeekAgo&quot;: &quot;update_time_utc_week_ago&quot;,
+    &quot;JamsDelay&quot;: &quot;jams_delay&quot;,
+    &quot;TrafficIndexLive&quot;: &quot;traffic_index_live&quot;,
+    &quot;JamsLengthInKms&quot;: &quot;jams_length_in_kms&quot;,
+    &quot;JamsCount&quot;: &quot;jams_count&quot;,
+    &quot;TrafficIndexWeekAgo&quot;: &quot;traffic_index_week_ago&quot;,
+    &quot;MinsDelay&quot;: &quot;mins_delay&quot;,
+    &quot;TravelTimeLivePer10KmsMins&quot;: &quot;travel_time_live_per_10kms_mins&quot;,
+    &quot;TravelTimeHistoricPer10KmsMins&quot;: &quot;travel_time_historic_per_10kms_mins&quot;
+})
+# verificar cambios
+traffic.columns</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Estandarizar los nombres de las columnas de eco
+#tu código aquí
+eco = eco.rename(columns={
+    &quot;Year&quot;: &quot;year&quot;,
+    &quot;City&quot;: &quot;city&quot;,
+    &quot;Country&quot;: &quot;country&quot;,
+    &quot;City GDP/capita&quot;: &quot;city_gdp_capita&quot;,
+    &quot;Unemployment %&quot;: &quot;unemployment_pct&quot;,
+    &quot;PM2.5 (μg/m³)&quot;: &quot;pm25&quot;,
+    &quot;Population (M)&quot;: &quot;population_m&quot;
+})
+# verificar cambios
+eco.columns</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>### 2.3 Corregir formatos numéricos y de fecha **🎯Objetivo:** Asegurar que las columnas de fechas y valores numéricos estén en formatos correctos para permitir análisis, cálculos y comparaciones precisas. **Instrucciones:** - Convierte las columnas de fecha de `traffic` a formato `datetime`. Haz el cambio a prueba de errores. - En el dataset `eco`, limpia los valores numéricos: - En `city_gdp_capita`: elimina separadores de miles (`.`) y reemplaza las comas (`&#x27;,&#x27;`) por puntos (`&#x27;.&#x27;`) antes de convertir a tipo `float`. - En `unemployment_pct`: elimina el símbolo de porcentaje (`%`) y reemplaza las comas (`&#x27;,&#x27;`) por puntos (`&#x27;.&#x27;`) antes de convertir a tipo `float`. - En `population_m`: reemplaza las comas (`&#x27;,&#x27;`) por puntos (`&#x27;.&#x27;`) antes de convertir a tipo `float`. - Finalmente, crea una nueva columna llamada `population` multiplicando `population_m` por 1,000,000 para obtener la población total.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>&lt;details&gt; &lt;summary&gt;Haz clic para ver la pista&lt;/summary&gt; para eliminar símbolos, puedes reemplazarlos por un texto vacío.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Convertir las columnas de traffic a tipo fecha con pd.to_datetime()
+traffic[&#x27;update_time_utc&#x27;] = pd.to_datetime(traffic[&#x27;update_time_utc&#x27;], errors = &quot;coerce&quot;)
+traffic[&#x27;update_time_utc_week_ago&#x27;] = pd.to_datetime(traffic[&#x27;update_time_utc_week_ago&#x27;], errors = &quot;coerce&quot;)
+
+# verificar el cambio
+traffic.info()</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Limpia separadores y convierte columnas numéricas en eco
+# eco[&#x27;city_gdp_capita&#x27;] = ....astype(str).str.replace(&#x27;.&#x27;, &#x27;&#x27;).str.replace(&#x27;,&#x27;, &#x27;.&#x27;).astype(float)
+eco[&#x27;city_gdp_capita&#x27;] = (
+    eco[&#x27;city_gdp_capita&#x27;]
+    .str.replace(&#x27;.&#x27;, &#x27;&#x27;, regex=False)
+    .str.replace(&#x27;,&#x27;, &#x27;.&#x27;, regex=False)
+    .astype(float)
+)
+# eco[&#x27;unemployment_pct&#x27;] = ...
+eco[&#x27;unemployment_pct&#x27;] = (
+    eco[&#x27;unemployment_pct&#x27;]
+    .str.replace(&#x27;%&#x27;, &#x27;&#x27;, regex=False)
+    .str.replace(&#x27;,&#x27;, &#x27;.&#x27;, regex=False)
+    .astype(float)
+)
+
+# eco[&#x27;population_m&#x27;] = ...
+eco[&#x27;population_m&#x27;] = (
+    eco[&#x27;population_m&#x27;]
+    .str.replace(&#x27;,&#x27;, &#x27;.&#x27;, regex=False)
+    .astype(float)
+)
+# Calcula la población total en unidades absolutas (Multiplica * 1000000)
+# eco[&#x27;population&#x27;] = ...
+eco[&#x27;population&#x27;] = eco[&#x27;population_m&#x27;] * 1000000
+# verificar el cambio
+eco.info()
+eco.head(3)</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- ## 🧩Paso 3: Extraer año y filtrar Extraer el año permite filtrar la información y trabajar solo con el período más reciente y relevante. ### 3.1 Extraer columna año y filtrar 2024 **🎯Objetivo** Identificar el año de cada registro y mantener solo los registros del 2024. **Intrucciones** - Como el DataFrame `traffic` no tiene una columna de año, utiliza el atributo `.dt.year` sobre su columna de fecha para crear una nueva columna llamada `year`. - Filtra las filas donde el año sea **2024**. - Utiliza `.copy()` para crear dos nuevos DataFrames (`traffic_2024` y `eco_2024`) para evitar modificar el dataset original.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Extraer el año de las fechas en update_time_utc
+# traffic[&#x27;year&#x27;] = ...
+traffic[&#x27;year&#x27;] = traffic[&#x27;update_time_utc&#x27;].dt.year
+# Verificar cambio
+traffic.head(3)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Filtra los registros del año 2024
+# traffic_2024 = traffic[...].copy()
+# eco_2024 = ...
+traffic_2024 = traffic[traffic[&#x27;year&#x27;] == 2024].copy()
+
+eco_2024 = eco[eco[&#x27;year&#x27;] == 2024].copy()
+# Revisar dataframes nuevos
+display(traffic_2024.head())
+display(eco_2024.head())</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- ## 🧩Paso 4: Analizar y resumir datos de movilidad Como el dataset de tráfico contiene **múltiples registros por ciudad**. En esta parte, calcularás los promedios anuales por ciudad para simplificar el análisis y obtener una visión más clara de las tendencias generales. ### 4.1 Calcular promedios de tráfico por ciudad **🎯Objetivo:** Obtener una vista consolidada del tráfico promedio por ciudad y año, para analizar patrones generales sin depender de datos diarios. **Instrucciones** - Agrupa los datos por `city`, `country` y `year`. - Calcula el promedio **solo de las métricas de tráfico más relevantes**: como `jams_delay`, `traffic_index_live`, `jams_length_kms`, `jams_count`, `mins_delay`, y tiempos de viaje (`travel_time_live_per_10kms_mins` y `travel_time_hist_per_10kms_mins`). - Guarda el resultado como `traffic_city_year_2024`, mantén las columnas como variables (no índices).</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>&lt;details&gt; &lt;summary&gt;Haz clic para ver la pista&lt;/summary&gt; Usa &quot;.agg()&quot; para aplicar funciones de promedio. Al final, reinicia el índice para mantener las columnas de la agrupación como variables (no índices).</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Calcular los  promedios de trafico por ciudad, país y año
+traffic_city_year_2024 =  traffic_city_year_2024 = (
+    traffic_2024
+    .groupby([&#x27;city&#x27;, &#x27;country&#x27;, &#x27;year&#x27;], as_index=False)
+    .agg({
+        &#x27;jams_delay&#x27;: &#x27;mean&#x27;,
+        &#x27;traffic_index_live&#x27;: &#x27;mean&#x27;,
+        &#x27;jams_length_in_kms&#x27;: &#x27;mean&#x27;,
+        &#x27;jams_count&#x27;: &#x27;mean&#x27;,
+        &#x27;mins_delay&#x27;: &#x27;mean&#x27;,
+        &#x27;travel_time_live_per_10kms_mins&#x27;: &#x27;mean&#x27;,
+        &#x27;travel_time_historic_per_10kms_mins&#x27;: &#x27;mean&#x27;
+    })
+)
+
+# Mostrar resultado
+traffic_city_year_2024.head()</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>### 🧠 **Momento de reflexión** ¡Excelente trabajo hasta aquí! Ahora que ya tienes los promedios anuales por ciudad, es momento de **observarlos** con atención. Piensa: - ¿Cuál crees que tiene el mayor tiempo promedio de tráfico? - ¿Será una ciudad de **Europa**, de **Latinoamérica** o de **otra región** del mundo? Para descubrirlo, ejecuta esta línea de código: `traffic_city_year_2024.sort_values([&quot;jams_delay&quot;], ascending=False)` 🔍 Observa qué ciudad aparece en los primeros lugares. ¿Te sorprenden los resultados? , ¿Coinciden con lo que imaginabas?</p></section><section class='cell code'><div class='label'>Code</div><pre><code># tu código aquí
+traffic_city_year_2024.sort_values([&quot;jams_delay&quot;], ascending=False)</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>La ciudad con el mayor tiempo promedio de tráfico es Mexico City</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- ## 🧩Paso 5: Unir movilidad y economía Combinar datasets te permite analizar cómo se relacionan los indicadores económicos con los de movilidad. ### 5.1 Unir tráfico (tabla principal) con indicadores económicos **🎯Objetivo:** Combinar la información de tráfico y economía en un solo DataFrame para analizar cómo las condiciones económicas se relacionan con la movilidad urbana. **Instrucciones** - Selecciona solo las **columnas relevantes** de cada dataset (por ejemplo, variables clave de tráfico y de economía). - Usa `.copy()` al crear subconjuntos para evitar modificar el dataset original. - Une ambos DataFrames y define como **claves de unión** a `city` y `year`. - Mantén solo las ciudades y años presentes en ambos datasets. - Guarda el resultado en una nueva variable llamada `merged` y muestra las primeras 5 filas.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>&lt;details&gt; &lt;summary&gt;Haz clic para ver la pista&lt;/summary&gt; Aplica una unión de tipo &quot;inner&quot; para mantener las ciudades y años presentes en ambos datasets.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Seleccionar columnas clave de tráfico y economía
+left_cols = [
+    &#x27;city&#x27;,
+    &#x27;country&#x27;,
+    &#x27;year&#x27;,
+    &#x27;jams_delay&#x27;,
+    &#x27;traffic_index_live&#x27;,
+    &#x27;jams_length_in_kms&#x27;,
+    &#x27;jams_count&#x27;,
+    &#x27;mins_delay&#x27;,
+    &#x27;travel_time_live_per_10kms_mins&#x27;,
+    &#x27;travel_time_historic_per_10kms_mins&#x27;
+]
+
+right_cols = [
+    &#x27;city&#x27;,
+    &#x27;year&#x27;,
+    &#x27;city_gdp_capita&#x27;,
+    &#x27;unemployment_pct&#x27;,
+    &#x27;pm25&#x27;,
+    &#x27;population&#x27;
+]
+
+# Usar .copy() para crear los dos nuevos datasets reducidos
+# traffic_2024_small = traffic_city_year_2024[ ... ].copy()
+# eco_2024_small = ...
+traffic_2024_small = traffic_city_year_2024[left_cols].copy()
+
+eco_2024_small = eco_2024[right_cols].copy()
+
+# Unir datasets
+merged = pd.merge(
+    traffic_2024_small,
+    eco_2024_small,
+    on=[&#x27;city&#x27;, &#x27;year&#x27;],
+    how=&#x27;inner&#x27;
+)
+
+# Mostrar las primeras 5 filas
+# tu código aquí
+display(merged.head())</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- ## 🧩Paso 6: Visualización y análisis de relaciones Ahora que tienes un dataset limpio y unificado, es momento de **visualizar patrones**. Los gráficos te ayudarán a entender cómo se relacionan las variables económicas con las de movilidad urbana. ### 6.1 Visualizar relaciones entre economía y tráfico **🎯Objetivo:** Analizar visualmente la distribución y la relación entre indicadores de tráfico y economía en 2024, para identificar posibles patrones o tendencias generales entre ambas variables. **Instrucciones** - Usa las librerías `seaborn` y `matplotlib.pyplot` para generar los gráficos. - Visualiza la distribución del **tráfico** (`jams_delay`) mediante: - **Boxplot** → para observar la media, mediana y detectar valores atípicos. - Visualiza la distribución de la **economía** (`city_gdp_capita`) mediante: - **Histograma** → para analizar la forma de la distribución y el valor promedio del PIB per cápita. - Finalmente, **compara ambas variables**, para observar si existe alguna relación entre ellas, haciendo un solo gráfico de barras donde aparezcan ambos indicadores. - Recuerda agregar título y etiquetas a los ejes de tus gráficos. - Observa y comenta los patrones, valores extremos o posibles relaciones que identifiques.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>**Tip:** Dentro de los parentesis del boxplot, agrega `showmeans=True` para ver la media en el gráfico.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Crear boxplot para observar el comportamiento de los minutos de congestion JamsDelay
+# crea tu gráfico
+
+sns.boxplot(
+    data=merged,
+    y=&#x27;jams_delay&#x27;,
+    showmeans=True
+)
+# obtener promedio para mostrarlo en título
+mean_value = merged[&#x27;jams_delay&#x27;].mean()
+plt.title(f&#x27;Boxplot de JamsDelay (2024)\nPromedio: {mean_value:.2f}&#x27;)
+plt.ylabel(&#x27;Minutos de congestión&#x27;)
+plt.show()</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Crear histograma para ver la distribución de la economía (city_gdp_capita)
+
+mean_gdp = merged[&#x27;city_gdp_capita&#x27;].mean()
+
+sns.histplot(
+
+    data=merged,
+
+    x=&#x27;city_gdp_capita&#x27;,
+    bins=10
+)
+
+plt.title(f&#x27;Distribución de PIB per cápita (2024)\nPromedio: {mean_gdp:.2f}&#x27;)
+plt.xlabel(&#x27;PIB per cápita&#x27;)
+plt.ylabel(&#x27;Frecuencia&#x27;)
+plt.show()</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Gráfico de barras para comparar jams_delay y city_gdp_capita por ciudad
+#merged.plot( ... , y=[&#x27;jams_delay&#x27;, &#x27;city_gdp_capita&#x27;])
+
+merged_plot = merged.sort_values(&#x27;jams_delay&#x27;, ascending=False)
+
+merged_plot.plot(
+    x=&#x27;city&#x27;,
+    y=[&#x27;jams_delay&#x27;, &#x27;city_gdp_capita&#x27;],
+    kind=&#x27;bar&#x27;,
+    figsize=(12, 6)
+)
+
+plt.title(&#x27;Comparación de JamsDelay y PIB per cápita por ciudad&#x27;)
+plt.xlabel(&#x27;Ciudad&#x27;)
+plt.ylabel(&#x27;Valor&#x27;)
+plt.xticks(rotation=90)
+plt.show()</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>**Tip:** Antes del `plt.show()` agrega el código `plt.xticks(rotation=90)` para rotar las etiquetas del eje X en 90 grados.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>### 🧠 **Reflexiona** Excelente trabajo llegando a esta etapa del análisis. Antes de avanzar, revisa tus gráficos, tómate un momento para pensar: * ¿Las ciudades con mayor PIB per cápita también presentan más congestión? * ¿O sucede lo contrario, o no existe una relación clara?</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>Escribe tus comentarios: Al observar los gráficos, se aprecia que las ciudades con mayor congestión no necesariamente tienen el mayor PIB per cápita. Algunas ciudades con alta actividad económica también presentan altos niveles de tráfico, pero la relación no parece ser completamente directa. Esto sugiere que la congestión puede estar influida por otros factores además de la productividad económica, como densidad poblacional, infraestructura vial, dependencia del automóvil y eficiencia del transporte público.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- ## 🧩Paso 7: Exportar y documentar resultados En esta etapa final consolidarás todo tu trabajo: guardarás el dataset limpio y crearás un resumen que documente los resultados del proyecto. ### 7.1 Guardar dataset final **🎯Objetivo:** Generar un CSV limpio, reproducible y con columnas relevantes para análisis posterior. **Instrucciones** - Exporta el DataFrame `merged` con el nombre: `ladb_mobility_economy_2024_clean.csv` - Usa `index=False` para no incluir el índice.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Exporta el dataset final como CSV
+merged.to_csv(&quot;ladb_mobility_economy_2024_clean.csv&quot;, index=False)</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>Para poder ver o descargar el archivo generado: En el menú lateral que esta a la izquierda, ve hasta la parte de abajo, a la sección de **Exportar dataset** para más información.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- ## ✅ Entregables 1. **Notebook `.ipynb`** con todas las celdas (código + comentarios). 2. **CSV final**: `ladb_mobility_economy_2024_clean.csv`. 3. **Resumen ejecutivo breve** en Markdown (3–5 párrafos).</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- # 🧾 Resumen ejecutivo (plantilla) &gt; Completa este resumen al finalizar el análisis. Mantén 3–5 párrafos cortos, claros y accionables. **Contexto &amp; objetivo:** - El análisis evaluó la relación entre movilidad urbana y productividad económica utilizando indicadores de congestión vehicular, tiempos de viaje y desempeño económico en ciudades de Latinoamérica durante 2024. El objetivo fue identificar si mayores niveles de tráfico y retrasos urbanos están asociados con menor productividad económica y peores condiciones operativas para las ciudades. **Cobertura de datos:** - El análisis se realizó exclusivamente para el año 2024 utilizando un dataset consolidado de movilidad y economía urbana. La base final incluyó: 15 ciudades múltiples países de Latinoamérica métricas agregadas a nivel ciudad–año **Metodología (alto nivel):** - El proyecto incluyó procesos de: limpieza y estandarización de columnas conversión de formatos numéricos y fechas transformación de variables económicas agregación de tráfico por ciudad y año se realizó una unión INNER JOIN utilizando (city + year) como claves principales para integrar movilidad y economía. También se aplicaron validaciones visuales mediante: -boxplots -histogramas -gráficos comparativos para detectar: -distribuciones -valores atípicos -tendencias generales -posibles anomalías **Hallazgos iniciales:** - Resume los patrones más importantes entre índices de tráfico y PIB per cápita. - Destaca anomalías u outliers que podrían requerir revisión adicional o un análisis más profundo. **Recomendaciones** Prioridad de inversión Bogotá debería considerarse una ciudad prioritaria para: -inversión en infraestructura vial -transporte público -movilidad inteligente -optimización logística Recomendaciones adicionales -profundizar el análisis con transporte público y densidad poblacional -validar correlaciones estadísticas formales -incorporar datos históricos multianuales -evaluar impacto ambiental y costos económicos de congestión</p></section>
+    </main>
+  </body>
+</html>
