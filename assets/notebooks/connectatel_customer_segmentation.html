@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ConnectaTel Customer Segmentation Analysis</title>
+    <style>
+      body { margin: 0; background: #f6f7f9; color: #111827; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      header { background: #111827; color: white; padding: 34px clamp(20px, 5vw, 70px); }
+      header p { color: #cbd5e1; max-width: 900px; }
+      main { display: grid; gap: 16px; padding: 28px clamp(20px, 5vw, 70px) 60px; }
+      .cell, main > p, main > h1, main > h2, pre { background: white; border: 1px solid #d9dee8; border-radius: 8px; margin: 0; padding: 16px; }
+      h1, h2 { margin-top: 8px; }
+      .label { background: #e2e8f0; color: #334155; font-size: .78rem; font-weight: 800; margin: -16px -16px 14px; padding: 8px 14px; text-transform: uppercase; }
+      .markdown p { line-height: 1.7; margin: 0; }
+      pre { background: #111827; color: #e5e7eb; overflow: auto; }
+      .code pre { border: 0; border-radius: 0; margin: 0 -16px -16px; }
+      code { font-family: Consolas, "Liberation Mono", ui-monospace, monospace; font-size: .9rem; }
+      .bullet { padding-left: 28px; }
+      .tableline { font-family: Consolas, ui-monospace, monospace; }
+    </style>
+  </head>
+  <body>
+    <header><h1>ConnectaTel Customer Segmentation Analysis</h1><p>Notebook HTML view for portfolio review.</p></header>
+    <main><section class='cell markdown'><div class='label'>Markdown</div><p># Análisis ConnectaTel Como **analista de datos**, tu objetivo es evaluar el **comportamiento de los clientes** de una empresa de telecomunicaciones en Latinoamérica, ConnectaTel. Trabajaremos con información registrada **hasta el año 2024**, lo cual permitirá analizar el comportamiento del negocio dentro de ese periodo. Para ello trabajarás con tres datasets: - **plans.csv** → información de los planes actuales (precio, minutos incluidos, GB incluidos, costo por extra) - **users.csv** → información de los clientes (edad, ciudad, fecha de registro, plan, churn) - **usage.csv** → detalle del **uso real** de los servicios (llamadas y mensajes) Deberás **explorar**, **limpiar** y **analizar** estos datos para construir un **perfil estadístico** de los clientes, detectar **comportamientos atípicos** y crear **segmentos de clientes**. Este análisis te permitirá **identificar patrones de consumo**, **diseñar estrategias de retención** y **sugerir mejoras en los planes** ofrecidos por la empresa. &gt; 💡 Antes de empezar, recuerda pensar de forma **programática**: ¿qué pasos necesitas? ¿En qué orden? ¿Qué quieres medir y por qué?</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- ## 🧩 Paso 1: Cargar y explorar Antes de limpiar o combinar los datos, es necesario **familiarizarte con la estructura de los tres datasets**. En esta etapa, validarás que los archivos se carguen correctamente, conocerás sus columnas y tipos de datos, y detectarás posibles inconsistencias. ### 1.1 Carga de datos y vista rápida **🎯 Objetivo:** Tener los **3 datasets listos en memoria**, entender su contenido y realizar una revisión preliminar. **Instrucciones:** - Importa las librerías necesarias (por ejemplo `pandas`, `seaborn`, `matplotlib.pyplot`) - Carga los archivos CSV usando `pd.read_csv()`: - **`/datasets/plans.csv`** - **`/datasets/users_latam.csv`** - **`/datasets/usage.csv`** - Guarda los DataFrames en las variables: `plans`, `users`, `usage`. - Muestra las primeras filas de cada DataFrame usando `.head()`.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># importar librerías
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># cargar archivos
+plans = pd.read_csv(&#x27;/datasets/plans.csv&#x27;)
+users = pd.read_csv(&#x27;/datasets/users_latam.csv&#x27;)
+usage = pd.read_csv(&#x27;/datasets/usage.csv&#x27;)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># mostrar las primeras 5 filas de plans
+plans.head(5)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># mostrar las primeras 5 filas de users
+users.head(5)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># mostrar las primeras 5 filas de usage
+usage.head(5)</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>**Tip:** Si no usas `print()` la tabla se vera mejor.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>### 1.2 Exploración de la estructura de los datasets **🎯 Objetivo:** Conocer la **estructura de cada dataset**, revisar cuántas filas y columnas tienen, identificar los **tipos de datos** de cada columna y detectar posibles **inconsistencias o valores nulos** antes de iniciar el análisis. **Instrucciones:** - Revisa el **número de filas y columnas** de cada dataset usando `.shape`. - Usa `.info()` en cada DataFrame para obtener un **resumen completo** de columnas, tipos de datos y valores no nulos.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># revisar el número de filas y columnas de cada dataset
+print(&quot;plans&quot;, plans.shape)
+print(&quot;users&quot;, users.shape)
+print(&quot;usage&quot;, usage.shape)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># inspección de plans con .info()
+plans.info()</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># inspección de users con .info()
+users.info()</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># inspección de usage con .info()
+usage.info()</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- ## 🧩Paso 2: Identificación de problemas de calidad de datos ### 2.1 Revisión de valores nulos **🎯 Objetivo:** Detectar la presencia y magnitud de valores faltantes para evaluar si afectan el análisis o requieren imputación/eliminación. **Instrucciones:** - Cuenta valores nulos por columna para cada dataset. - Calcula la proporción de nulos por columna para cada dataset. El dataset `plans` solamente tiene 2 renglones y se puede observar que no tiene ausentes, por ello no necesita exploración adicional. &lt;br&gt; &lt;details&gt; &lt;summary&gt;Haz clic para ver la pista&lt;/summary&gt; Usa `.isna().sum()` para contar valores nulos y usa `.isna().mean()` para calcular la proporción.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># cantidad de nulos para users
+print(users.isna().sum())
+print(users.isna().mean())</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># cantidad de nulos para usage
+print(usage.isna().sum())
+print(usage.isna().mean())</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>✍️ **Comentario**: Haz doble clic en este bloque y escribe tu diagnóstico al final del bloque. Incluye qué ves y que acción recomendarías para cada caso. 💡 **Nota:** Justifica tus decisiones brevemente (1 línea por caso). * Hint: - Si una columna tiene **más del 80–90% de nulos**, normalmente se **ignora o elimina**. - Si tiene **entre 5% y 30%**, generalmente se **investiga para imputar o dejar como nulos**. - Si es **menor al 5%**, suele ser un caso simple de imputación o dejar como nulos. --- **Valores nulos** • city (11.7% nulos): imputar con &quot;Unknown&quot; o investigar la causa para evitar perder registros. • churn_date (88.3% nulos): mantener los nulos, ya que probablemente representan clientes activos y no un problema de calidad. • date (0.13% nulos): eliminar o revisar manualmente los pocos registros afectados. • duration (55.2% nulos): analizar la relación con el tipo de uso antes de imputar, ya que los nulos podrían ser válidos. • length (44.7% nulos): investigar su dependencia con la variable type para determinar si los faltantes son esperados o requieren tratamiento.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>### 2.2 Detección de valores inválidos y sentinels 🎯 **Objetivo:** Identificar sentinels: valores que no deberían estar en el dataset. **Instrucciones:** - Explora las columnas numéricas con **un resumen estadístico** y describe brevemente que encontraste. - Explora las columnas categóricas **relevantes**, revisando sus valores únicos y describe brevemente que encontraste. El dataset `plans` solamente tiene 2 renglones, por ello no necesita exploración adicional.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># explorar columnas numéricas de users
+users[[&quot;user_id&quot;, &quot;age&quot;]].describe()</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>- La columna `user_id&#x27; parece funcionar como identificador único. No se observan valores anómalos en la exploración inicial. - La columna `age&#x27; presenta un valor mínimo de -999, lo que indica la presencia de un valor sentinel utilizado para representar datos faltantes o inválidos. Este valor deberá convertirse a NaN antes del análisis.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># explorar columnas numéricas de usage
+usage[[&quot;id&quot;, &quot;user_id&quot;]].describe()</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>- Las columnas (user_id e id) funcionan como identificadores y no muestran anomalías evidentes. Se recomienda validar su unicidad y mantenerlas sin modificaciones.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># explorar columnas categóricas de users
+columnas_user = [&#x27;city&#x27;, &#x27;plan&#x27;]
+for col in columnas_user:
+    print(users[col].value_counts(dropna=False))</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>- La columna city presenta 469 valores nulos y 96 registros con el valor &quot;?&quot;, el cual parece utilizarse como sentinel para indicar información desconocida. Se recomienda unificar &quot;?&quot; por NaN antes del análisis. - La columna plan presenta únicamente las categorías esperadas (Basic y Premium) y no muestra valores anómalos.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># explorar columna categórica de usage
+usage[[&quot;type&quot;]].describe()</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>- La columna type contiene únicamente dos categorías distintas. No se observan valores faltantes ni categorías inesperadas en la exploración inicial.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- ✍️ **Comentario**: Haz doble clic en este bloque y escribe tu diagnóstico. Incluye qué ves y que acción recomendarías para cada caso. **Valores inválidos o sentinels** -Se identificó un valor sentinel (-999) en la columna (age). Se recomienda reemplazarlo por NaN antes de realizar análisis o segmentaciones. -La columna (city) presenta 469 valores nulos y 96 registros con el valor &quot;?&quot;, el cual probablemente representa información faltante. Se recomienda unificar &quot;?&quot; a NaN y evaluar una estrategia de imputación. -Las columnas (user_id e id) funcionan como identificadores y no muestran anomalías evidentes. Se recomienda validar su unicidad y mantenerlas sin modificaciones. -La columna (plan) contiene únicamente las categorías esperadas (Basic y Premium). No se requieren acciones de limpieza adicionales. -La columna (type) contiene dos categorías válidas y no presenta problemas aparentes de calidad. Se recomienda únicamente verificar que ambas categorías correspondan a valores esperados del negocio.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>### 2.3 Revisión y estandarización de fechas **🎯 Objetivo:** Asegurar que las columnas de fecha estén correctamente formateadas y detectar años fuera de rango que indiquen errores de captura. **Instrucciones:** - Convierte las columnas de fecha a tipo fecha y asegurate de que el código sea a prueba de errores. - Revisa cuántas veces aparece cada año. - Identifica fechas imposibles (ej. años futuros o negativos). Toma en cuenta que tenemos datos registrados hasta el año 2024.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Convertir a fecha la columna `reg_date` de users
+users[&#x27;reg_date&#x27;] = pd.to_datetime(users[&quot;reg_date&quot;], errors = &quot;coerce&quot;)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Convertir a fecha la columna `date` de usage
+usage[&#x27;date&#x27;] = pd.to_datetime(usage[&quot;date&quot;], errors = &quot;coerce&quot;)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Revisar los años presentes en `reg_date` de users
+print(users[&quot;reg_date&quot;].dt.year.value_counts().sort_index())</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>En reg_date se observan registros de los años 2022, 2023 y 2024, los cuales son consistentes con el periodo analizado. Sin embargo, se identificaron 40 registros correspondientes al año 2026, un año futuro respecto al alcance de los datos. Se recomienda revisar estos registros y corregirlos o excluirlos antes del análisis.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Revisar los años presentes en `date` de usage
+print(usage[&quot;date&quot;].dt.year.value_counts().sort_index())</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>En date todos los registros corresponden al año 2024. No se identifican fechas futuras ni valores fuera de rango, por lo que no se requieren acciones correctivas.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>✍️ **Comentario**: escribe tu diagnóstico, e incluye **qué acción recomendarías** para cada caso: **Fechas fuera de rango** - ¿Aparecen años imposibles? (años muy viejos o sin transcurrir al momento de guardar los datos) - Sí. En la columna reg_date se identificaron 40 registros correspondientes al año 2026, el cual se encuentra fuera del rango esperado del dataset. En la columna date no se detectaron años fuera de rango. - ¿Qué harías con ellas? - Se recomienda investigar los registros del año 2026 para validar si se trata de errores de captura. Dependiendo del contexto del negocio, estos registros podrían corregirse, marcarse como valores faltantes o excluirse del análisis para evitar sesgos en los resultados.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- ## 🧩Paso 3: Limpieza básica de datos ### 3.1 Corregir sentinels y fechas imposibles **🎯 Objetivo:** Aplicar reglas de limpieza para reemplazar valores sentinels y corregir fechas imposibles. **Instrucciones:** - En `age`, reemplaza el sentinel **-999** con la mediana. - En `city`, reemplaza el sentinel `&quot;?&quot;` por valores nulos (`pd.NA`). - Marca como nulas (`pd.NA`) las fechas fuera de rango.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Reemplazar -999 por la mediana de age
+
+users[&#x27;age&#x27;] = users[&#x27;age&#x27;].replace(-999, pd.NA)
+age_mediana = users[&quot;age&quot;].median()
+users[&#x27;age&#x27;] = users[&#x27;age&#x27;].fillna(age_mediana)
+
+# Verificar cambios
+users[&#x27;age&#x27;].describe()</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Reemplazar ? por NA en city
+
+users[&quot;city&quot;] = users[&quot;city&quot;].replace(&quot;?&quot;, pd.NA)
+
+# Verificar cambios
+users[&quot;city&quot;].value_counts(dropna=False)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Marcar fechas futuras como NA para reg_date
+
+users.loc[users[&#x27;reg_date&#x27;].dt.year &gt; 2024, &#x27;reg_date&#x27;] = pd.NaT
+
+# Verificar cambios
+
+users[&#x27;reg_date&#x27;].dt.year.value_counts(dropna=False)</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>### 3.2 Corregir sentinels y fechas imposibles **🎯 Objetivo:** Decidir qué hacer con los valores nulos según su proporción y relevancia. **Instrucciones:** - Verifica si los nulos en `duration` y `length` son **MAR**(Missing At Random) revisando si dependen de la columna `type`. Si confirmas que son MAR, **déjalos como nulos** y justifica la decisión.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Verificación MAR en usage (Missing At Random) para duration
+
+print(
+    usage.groupby(&quot;type&quot;)[&quot;duration&quot;]
+         .apply(lambda x: x.isna().mean())
+)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Verificación MAR en usage (Missing At Random) para length
+
+
+print(
+    usage.groupby(&quot;type&quot;)[&quot;length&quot;]
+         .apply(lambda x: x.isna().mean())
+)</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>Haz doble clic aquíy escribe que tu diagnostico de nulos en `duration` y `length` Los valores faltantes en duration y length dependen claramente de la variable type. La columna duration presenta valores nulos principalmente para registros de tipo text, mientras que la columna length presenta valores nulos principalmente para registros de tipo call. Este comportamiento indica que los valores faltantes siguen un patrón relacionado con el tipo de uso registrado y no corresponden a errores de captura. Por lo tanto, los nulos pueden considerarse MAR y se recomienda conservarlos sin imputación, ya que contienen información relevante del negocio.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- ## 🧩Paso 4: Summary statistics de uso por usuario ### 4.1 Agrupación por comportamiento de uso 🎯**Objetivo**: Resumir las variables clave de la tabla `usage` **por usuario**, creando métricas que representen su comportamiento real de uso histórico. **Instrucciones:**: 1. Construye una tabla agregada de `usage` por `user_id` que incluya: - número total de mensajes - número total de llamadas - total de minutos de llamadas 2. Renombra las columnas para que tengan nombres claros: - `cant_mensajes` - `cant_llamadas` - `cant_minutos_llamada` 3. Combina esta tabla con `users`.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Columnas auxiliares
+usage[&quot;is_text&quot;] = (usage[&quot;type&quot;] == &quot;text&quot;).astype(int) #conocer el total de mensajes
+usage[&quot;is_call&quot;] = (usage[&quot;type&quot;] == &quot;call&quot;).astype(int) #conocer el total de llamadas
+
+
+# Agrupar información por usuario
+usage_agg = (usage.groupby(&quot;user_id&quot;).agg({&quot;is_text&quot;: &quot;sum&quot;, &quot;is_call&quot;: &quot;sum&quot;, &quot;duration&quot;: &quot;sum&quot;}).reset_index())
+
+# observar resultado
+usage_agg.head(3)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Renombrar columnas
+
+usage_agg = usage_agg.rename(columns = {&quot;is_text&quot;: &quot;cant_mensajes&quot;, &quot;is_call&quot;: &quot;cant_llamadas&quot;, &quot;duration&quot;: &quot;cant_minutos_llamada&quot;})
+
+# observar resultado
+usage_agg.head(3)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Combinar la tabla agregada con el dataset de usuarios
+user_profile = users.merge(usage_agg, on = &quot;user_id&quot;, how = &quot;left&quot;)
+user_profile.head(5)</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>### 4.2 4.2 Resumen estadístico por usuario durante el 2024 🎯 **Objetivo:** Analizar las columnas numéricas y categóricas de los usuarios, para identificar rangos, valores extremos y distribución de los datos antes de continuar con el análisis. **Instrucciones:** 1. Para las columnas **numéricas** relevantes, obtén un resumen estadístico (media, mediana, mínimo, máximo, etc.). 2. Para la columna **categórica** `plan`, revisa la distribución en **porcentajes** de cada categoría.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Resumen estadístico de las columnas numéricas
+
+user_profile[[&quot;age&quot;, &quot;cant_mensajes&quot;, &quot;cant_llamadas&quot;, &quot;cant_minutos_llamada&quot;]].describe()</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Distribución porcentual del tipo de plan
+
+user_profile[&quot;plan&quot;].value_counts(normalize = True) * 100</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- ## 🧩Paso 5: Visualización de distribuciones (uso y clientes) y outliers ### 5.1 Visualización de Distribuciones 🎯 **Objetivo:** Entender visualmente cómo se comportan las variables clave tanto de **uso** como de **clientes**, observar si existen diferencias según el tipo de plan, y analizar la **forma de la distribución**. **Instrucciones:** Graficar **histogramas** para las siguientes columnas: - `age` (edad de los usuarios) - `cant_mensajes` - `cant_llamadas` - `total_minutos_llamada` Después de cada gráfico, escribe un **insight** respecto al plan y la variable, por ejemplo: - &quot;Dentro del plan Premium, hay mayor proporción de...&quot; - &quot;Los usuarios Básico tienden a hacer ... llamadas y enviar ... mensajes.&quot; o &quot;No existe algún patrón.&quot; - ¿Qué tipo de distribución tiene ? (simétrica, sesgada a la derecha o a la izquierda) **Hint** Para cada histograma, - Usa `hue=&#x27;plan&#x27;` para ver cómo varían las distribuciones según el plan (Básico o Premium). - Usa `palette=[&#x27;skyblue&#x27;,&#x27;green&#x27;]` - Agrega título y etiquetas</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Histograma para visualizar la edad (age)
+sns.histplot(data = user_profile, x=&quot;age&quot;, hue=&quot;plan&quot;, palette= [&quot;skyblue&quot;, &quot;green&quot;])
+
+plt.title(&quot;Distribución de Edad por Plan&quot;)
+plt.xlabel(&quot;Edad&quot;)
+plt.ylabel(&quot;Frecuencia&quot;)
+plt.show()</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>💡Insights: - La distribución de edad parece relativamente equilibrada entre los planes Basic y Premium. No se observan diferencias importantes en la composición etaria de los usuarios. La distribución es aproximadamente simétrica.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Histograma para visualizar la cant_mensajes
+
+sns.histplot(data= user_profile, x=&quot;cant_mensajes&quot;, hue=&quot;plan&quot;, palette=[&quot;skyblue&quot;, &quot;green&quot;])
+
+plt.title(&quot;Cantidad de Mensajes por Plan&quot;)
+plt.xlabel(&quot;Mensajes&quot;)
+plt.ylabel(&quot;Frecuencia&quot;)
+plt.show()</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>💡Insights: - La distribución de mensajes es similar entre los usuarios de los planes Basic y Premium. La mayor parte de los usuarios se concentra en niveles bajos y medios de uso, mientras que un grupo reducido presenta una cantidad mayor de mensajes. La distribución muestra un ligero sesgo hacia la derecha.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Histograma para visualizar la cant_llamadas
+
+sns.histplot(data = user_profile, x=&quot;cant_llamadas&quot;, hue=&quot;plan&quot;, palette=[&quot;skyblue&quot;, &quot;green&quot;])
+
+plt.title(&quot;Cantidad de Llamadas por Plan&quot;)
+plt.xlabel(&quot;Llamadas&quot;)
+plt.ylabel(&quot;Frecuencia&quot;)
+plt.show()</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>💡Insights: - Los usuarios de ambos planes presentan patrones de llamadas similares. La mayoría se concentra en niveles moderados de uso, aunque existen algunos usuarios con una cantidad de llamadas considerablemente superior al resto. La distribución presenta sesgo positivo (hacia la derecha).</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Histograma para visualizar la cant_minutos_llamada
+
+sns.histplot(data = user_profile, x=&quot;cant_minutos_llamada&quot;, hue=&quot;plan&quot;, palette=[&quot;skyblue&quot;, &quot;green&quot;])
+
+plt.title(&quot;Minutos de Llamada por Plan&quot;)
+plt.xlabel(&quot;Minutos&quot;)
+plt.ylabel(&quot;Frecuencia&quot;)
+plt.show()</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>💡Insights: - La distribución de minutos de llamada presenta un claro sesgo hacia la derecha, ya que la mayoría de los usuarios concentra un menor consumo de minutos mientras que un grupo reducido acumula consumos significativamente más altos. Los usuarios de los planes Basic y Premium muestran patrones similares de comportamiento, aunque se observan algunos usuarios con valores extremos que podrían considerarse potenciales outliers.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>### 5.2 Identificación de Outliers 🎯 **Objetivo:** Detectar valores extremos en las variables clave de **uso** y **clientes** que podrían afectar el análisis, y decidir si requieren limpieza o revisión adicional. **Instrucciones:** - Usa **boxplots** para identificar visualmente outliers en las siguientes columnas: - `age` - `cant_mensajes` - `cant_llamadas` - `total_minutos_llamada` - Crea un **for** para generar los 4 boxplots automáticamente. &lt;br&gt; - Después de crear los gráfico, responde si **existen o no outliers** en las variables. - Si hay outliers, crea otro bucle para calcular los límites de esas columnas usando el **método IQR** y decide qué hacer con ellos. - Si solamente hay outliers de un solo lado, no es necesario calcular ambos límites. **Hint:** - Dentro del bucle, usa `plt.title(f&#x27;Boxplot: {col}&#x27;)` para que el título cambie acorde a la columna.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Visualizando usando BoxPlot 
+columnas_numericas = [&#x27;age&#x27;, &#x27;cant_mensajes&#x27;, &#x27;cant_llamadas&#x27;, &#x27;cant_minutos_llamada&#x27;]
+
+for col in columnas_numericas:
+    sns.boxplot(data=user_profile, x=col)
+    plt.title(f&#x27;Boxplot:{col}&#x27;)
+    plt.show()</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>💡Insights: - Age: No se observan outliers en la variable age. La distribución se encuentra dentro de rangos esperados y no presenta valores extremos después de la limpieza realizada. - cant_mensajes: Se observan algunos outliers en la parte superior de la distribución. Estos valores representan usuarios con una cantidad de mensajes superior al comportamiento típico del resto de los usuarios. - cant_llamadas: Se identifican algunos outliers en la cola superior de la distribución. Estos registros corresponden a usuarios con un volumen de llamadas mayor al observado en la mayoría de la población. - cant_minutos_llamada: Se observa la mayor cantidad de outliers en esta variable. Existen usuarios con consumos de minutos significativamente superiores al comportamiento central de la distribución.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Calcular límites con el método IQR
+columnas_limites = [&quot;cant_mensajes&quot;, &quot;cant_llamadas&quot;, &quot;cant_minutos_llamada&quot;]
+
+for col in columnas_limites:
+
+    q1= user_profile[col].quantile(0.25)
+    q3= user_profile[col].quantile(0.75)
+
+    iqr = q3 - q1
+
+    limite_inferior = q1 - 1.5 * iqr
+    limite_superior = q3 - 1.5 * iqr
+
+    print(f&quot;\n{col}&quot;)
+    print(f&quot;Límite inferior: {limite_inferior}&quot;)
+    print(f&quot;Límite superior: {limite_superior}&quot;)
+    print(f&quot;Máximo observado: {user_profile[col].max()}&quot;)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Revisa los limites superiores y el max, para tomar la decisión de mantener los outliers o no
+user_profile[columnas_limites].describe()</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>💡Insights: - cant_mensajes: mantener o no outliers, porqué? - Se identifican valores por encima del límite superior del método IQR. Sin embargo, la diferencia entre el límite superior y el máximo observado no es extrema, por lo que estos registros pueden representar usuarios con un comportamiento de uso intensivo. Se recomienda mantener los outliers para preservar información relevante del negocio. - cant_llamadas: mantener o no outliers, porqué? -La variable presenta algunos valores por encima del límite superior calculado mediante IQR. Estos registros parecen corresponder a usuarios con una frecuencia de llamadas superior al promedio y no a errores de captura. Se recomienda conservar los outliers. - cant_minutos_llamada: mantener o no outliers, porqué? - Se observan múltiples valores por encima del límite superior del método IQR. Aunque la diferencia entre el límite superior y el máximo observado es considerable, estos valores son consistentes con usuarios de alto consumo. Debido a que la variable representa comportamiento real de uso, se recomienda mantener los outliers para no perder información relevante.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- ## 🧩Paso 6: Segmentación de Clientes ### 6.1 Segmentación de Clientes Por Uso 🎯 **Objetivo:** Clasificar a cada usuario en un grupo de uso (Bajo uso, Uso medio, Alto uso) basándose en la cantidad de llamadas y mensajes registrados. **Instrucciones:** - Crea una nueva columna llamada `grupo_uso` en el dataframe `user_profile`. - Usa comparaciones lógicas (&lt;, &gt;) para evaluar las condiciones de llamadas y mensajes y asigna: - `&#x27;Bajo uso&#x27;` cuando llamadas &lt; 5 y mensajes &lt; 5 - `&#x27;Uso medio&#x27;` cuando llamadas &lt; 10 y mensajes &lt; 10 - `&#x27;Alto uso&#x27;` para el resto de casos</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Crear columna grupo_uso
+
+def clasificar_uso(row):
+
+    if row[&quot;cant_llamadas&quot;] &lt; 5 and row[&quot;cant_mensajes&quot;] &lt; 5:
+        return &quot;Bajo uso&quot;
+
+    elif row[&quot;cant_llamadas&quot;] &lt; 10 and row[&quot;cant_mensajes&quot;] &lt; 10:
+        return &quot;Uso medio&quot;
+
+    else:
+        return &quot;Alto uso&quot;
+
+user_profile[&quot;grupo_uso&quot;] = user_profile.apply(clasificar_uso, axis=1)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># verificar cambios
+user_profile.head()</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>### 6.2 Segmentación de Clientes Por Edad 🎯 **Objetivo:**: Clasificar a cada usuario en un grupo por **edad**. **Instrucciones:** - Crea una nueva columna llamada `grupo_edad` en el dataframe `user_profile`. - Usa comparaciones lógicas (&lt;, &gt;) para evaluar las condiciones y asigna: - `&#x27;Joven&#x27;` cuando age &lt; 30 - `&#x27;Adulto&#x27;` cuando age &lt; 60 - `&#x27;Adulto Mayor&#x27;` para el resto de casos</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Crear columna grupo_edad
+# Crear columna grupo_edad
+
+def clasificar_edad(row):
+
+    if row[&quot;age&quot;] &lt; 30:
+        return &quot;Joven&quot;
+
+    elif row[&quot;age&quot;] &lt; 60:
+        return &quot;Adulto&quot;
+
+    else:
+        return &quot;Adulto Mayor&quot;
+
+user_profile[&quot;grupo_edad&quot;] = user_profile.apply(clasificar_edad, axis=1)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># verificar cambios
+user_profile.head()</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>### 6.3 Visualización de la Segmentación de Clientes 🎯 **Objetivo:** Visualizar la distribución de los usuarios según los grupos creados: **grupo_uso** y **grupo_edad**. **Instrucciones:** - Crea dos gráficos para las variables categóricas `grupo_uso` y `grupo_edad`. - Agrega título y etiquetas a los ejes en cada gráfico.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Visualización de los segmentos por uso
+
+sns.countplot(data=user_profile, x=&quot;grupo_uso&quot;)
+
+plt.title(&quot;Distribución de Usuarios por Grupo de Uso&quot;)
+plt.xlabel(&quot;Grupo de Uso&quot;)
+plt.ylabel(&quot;Cantidad de Usuarios&quot;)
+
+plt.show()</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Visualización de los segmentos por edad
+
+sns.countplot(data=user_profile, x=&quot;grupo_edad&quot;)
+
+plt.title(&quot;Distribución de Usuarios por Grupo de Edad&quot;)
+plt.xlabel(&quot;Grupo de Edad&quot;)
+plt.ylabel(&quot;Cantidad de Usuarios&quot;)
+
+plt.show()</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- ## 🧩Paso 7: Insight Ejecutivo para Stakeholders 🎯 **Objetivo:** Traducir los hallazgos del análisis en conclusiones accionables para el negocio, enfocadas en segmentación, patrones de uso y oportunidades comerciales. **Preguntas a responder:** - ¿Qué problemas tenían originalmemte los datos?¿Qué porcentaje, o cantidad de filas, de esa columna representaban? Se identificaron varios problemas de calidad de datos: -La columna age contenía el valor sentinel -999, utilizado para representar edades desconocidas o inválidas. -La columna city presentaba 469 valores nulos y 96 registros con el valor &quot;?&quot;, considerado un valor sentinel para datos faltantes. -La columna reg_date contenía 40 registros del año 2026, considerados fechas fuera de rango debido a que el análisis contempla información hasta 2024. -Las columnas duration y length presentaban valores nulos, pero se comprobó que estos dependían del tipo de registro (call o text), por lo que corresponden a un patrón MAR y no a errores de captura. - ¿Qué segmentos de clientes identificaste y cómo se comportan según su edad y nivel de uso? Se identificaron dos tipos de segmentación: Por edad Joven Adulto Adulto Mayor La mayor concentración de clientes se encuentra en el segmento de Adultos, representando la base principal de usuarios de ConectaTel. Por nivel de uso Bajo uso Uso medio Alto uso La mayoría de los clientes presenta patrones de consumo moderados, mientras que un grupo reducido concentra niveles de uso significativamente más altos. - ¿Qué segmentos parecen más valiosos para ConnectaTel y por qué? El segmento de Alto uso parece ser el más valioso para la compañía. Estos usuarios registran mayores cantidades de llamadas, mensajes y minutos consumidos, lo que los convierte en candidatos ideales para: -planes Premium -programas de fidelización -campañas de retención -ofertas de servicios adicionales - ¿Qué patrones de uso extremo (outliers) encontraste y qué implican para el negocio? Se identificaron outliers en: -cant_mensajes -cant_llamadas -cant_minutos_llamada El método IQR confirmó la presencia de usuarios cuyos niveles de consumo superan significativamente el comportamiento promedio. Estos valores no parecen errores de captura, sino usuarios con patrones de consumo intensivo. Para el negocio representan clientes de alto valor y oportunidades de monetización. - ¿Qué recomendaciones harías para mejorar la oferta actual de planes o crear nuevos planes basados en los segmentos y patrones detectados? -Crear beneficios específicos para usuarios de alto consumo. -Desarrollar estrategias de migración hacia planes Premium. -Diseñar ofertas diferenciadas según grupos de edad. -Implementar monitoreo continuo de calidad de datos para prevenir errores de captura. -Analizar de forma específica a los usuarios con consumos extremos para identificar oportunidades de crecimiento y retención. ✍️ **Escribe aquí tu análisis ejecutivo:**</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>### Análisis ejecutivo ⚠️ **Problemas detectados en los datos** Durante la etapa de limpieza se identificaron valores sentinel en las columnas age y city, además de registros con fechas futuras en reg_date. También se detectaron valores faltantes en duration y length, los cuales fueron clasificados como MAR debido a su dependencia con la variable type. Se aplicaron las correcciones necesarias para garantizar la calidad del análisis. 🔍 **Segmentos por Edad** Los clientes fueron clasificados en tres grupos: Jóvenes, Adultos y Adultos Mayores. El segmento Adulto concentra la mayor parte de los usuarios, convirtiéndose en el principal mercado objetivo para ConectaTel. Los grupos Jóvenes y Adultos Mayores representan oportunidades para desarrollar ofertas más especializadas. 📊 **Segmentos por Nivel de Uso** Los usuarios fueron agrupados en categorías de Bajo uso, Uso medio y Alto uso. Se observó que la mayoría presenta consumos moderados, mientras que un grupo reducido registra niveles significativamente superiores de llamadas, mensajes y minutos consumidos. ➡️ Esto sugiere que ... Las variables de uso presentan distribuciones sesgadas hacia la derecha, indicando que la mayoría de los clientes tiene consumos moderados y que existe un grupo reducido con consumos elevados. Los outliers identificados fueron conservados debido a que representan comportamientos reales de clientes y no errores de calidad de datos. 💡 **Recomendaciones** Se recomienda fortalecer la oferta dirigida a usuarios de alto consumo mediante beneficios exclusivos, programas de fidelización y opciones Premium. Asimismo, es conveniente diseñar estrategias comerciales diferenciadas por grupo de edad y mantener controles de calidad sobre los datos para mejorar la confiabilidad de futuros análisis. El monitoreo continuo de los usuarios con consumos extremos permitirá identificar oportunidades de crecimiento y maximizar el valor generado por los clientes más activos.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- ## 🧩Paso 8 Cargar tu notebook y README a GitHub 🎯 **Objetivo:** Entregar tu análisis de forma **profesional**, **documentada** y **versionada**, asegurando que cualquier persona pueda revisar, ejecutar y entender tu trabajo. ### Opción A : Subir archivos desde la interfaz de GitHub (UI) 1. Descarga este notebook (`File → Download .ipynb`). 2. Entra a tu repositorio en GitHub (por ejemplo `telecom-analysis` o `sprint7-final-project`). 3. Sube tu notebook **Add file → Upload files**. --- ### Opción B : Guardar directo desde Google Colab 1. Abre tu notebook en Colab. 2. Ve a **File → Save a copy in GitHub**. 3. Selecciona el repositorio y la carpeta correcta (ej: `notebooks/`). 4. Escribe un mensaje de commit claro, por ejemplo: - `feat: add final ConnectaTel analysis` - `agregar version final: Análisis ConnectaTel` 5. Verifica en GitHub que el archivo quedó en el lugar correcto y que el historial de commits se mantenga limpio. --- Agrega un archivo `README.md` que describa de forma clara: - el objetivo del proyecto, - los datasets utilizados, - las etapas del análisis realizadas, - cómo ejecutar el notebook (por ejemplo, abrirlo en Google Colab), - una breve guía de reproducción. ---</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>Link a repositorio público del proyecto: `LINK a tu repo aquí`</p></section><section class='cell code'><div class='label'>Code</div><pre><code>https://robertocuevas-14.github.io/jose-roberto-data-bi-portfolio/</code></pre></section></main>
+  </body>
+</html>

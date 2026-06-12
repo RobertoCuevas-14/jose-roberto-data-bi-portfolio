@@ -494,5 +494,78 @@
     "role": "Python Data Analyst",
     "contribution": "Cleaned, transformed and joined mobility and economic datasets in Python, documenting the process in a reproducible Jupyter Notebook.",
     "learning": "Strengthened EDA methodology by combining data quality checks, feature preparation and visual analysis for strategic questions."
+  },
+  {
+    "id": "connectatel-customer-segmentation",
+    "name": "ConnectaTel Customer Segmentation Analysis",
+    "category": "Telecom Analytics",
+    "status": "Evidence Available",
+    "year": "2026",
+    "summary": "Python analysis of telecom customer behavior to detect data quality issues, build usage metrics and segment customers by usage and age.",
+    "result": "Transformed raw plans, users and usage data into customer-level insights for segmentation, usage behavior and stakeholder recommendations.",
+    "stack": [
+      "Python",
+      "Pandas",
+      "Seaborn",
+      "Matplotlib",
+      "Jupyter Notebook"
+    ],
+    "tags": [
+      "Telecom Analytics",
+      "Customer Segmentation",
+      "Data Cleaning",
+      "EDA",
+      "Python"
+    ],
+    "repo": "",
+    "demo": "",
+    "notebook": "assets/notebooks/connectatel_customer_segmentation.ipynb",
+    "notebookView": "assets/notebooks/connectatel_customer_segmentation.html",
+    "readme": "assets/projects/connectatel/README.md",
+    "readmeView": "assets/projects/connectatel/README.html",
+    "preview": "assets/previews/connectatel_customer_segmentation_preview.png",
+    "gallery": [
+      "assets/previews/connectatel_notebook_context.png"
+    ],
+    "visual": "linear-gradient(135deg, #111827 0%, #0ea5e9 46%, #f97316 100%)",
+    "filterGroup": "SQL / Python",
+    "role": "Python Data Analyst",
+    "contribution": "Loaded and profiled telecom datasets, cleaned sentinel values and invalid dates, aggregated usage behavior by user and created customer segments for business interpretation.",
+    "learning": "Strengthened the ability to connect data quality, feature engineering and segmentation with stakeholder-ready recommendations.",
+    "caseStudy": {
+      "context": "Applied telecom analytics project focused on ConnectaTel customer behavior in Latin America using data registered up to 2024.",
+      "problem": "Customer, plan and usage data contained quality issues such as sentinel values, missing fields and out-of-range dates, making it difficult to trust segmentation and usage insights.",
+      "objective": "Prepare customer-level analytics by cleaning data, aggregating usage metrics and segmenting customers by behavior and age to support business recommendations.",
+      "tools": [
+        "Python for data preparation and analysis",
+        "Pandas for loading, cleaning, aggregation and merging datasets",
+        "Seaborn and Matplotlib for exploratory visualizations",
+        "Jupyter Notebook / Google Colab for reproducible documentation"
+      ],
+      "kpis": [
+        "Total messages by user",
+        "Total calls by user",
+        "Total call minutes",
+        "Usage segment",
+        "Age segment",
+        "Missing values by field",
+        "Invalid or out-of-range records"
+      ],
+      "analysisProcess": "The notebook loads plans, users and usage datasets, reviews data structure, identifies nulls and sentinel values, corrects invalid fields, aggregates usage metrics by user, merges profile and behavior data, visualizes distributions and creates customer segments.",
+      "insights": [
+        "The data quality review identified sentinel values in age and city, plus future registration dates that required treatment before analysis.",
+        "Usage metrics needed to be aggregated at customer level to support meaningful segmentation.",
+        "Segmenting by usage and age helped translate raw activity records into business-readable customer groups.",
+        "The executive summary connects cleaning decisions, behavioral patterns and potential commercial opportunities."
+      ],
+      "impact": "The project provides a reproducible workflow for transforming telecom operational records into customer segments and stakeholder-ready insights.",
+      "recommendations": [
+        "Maintain data quality checks for sentinel values and out-of-range dates before using customer analytics outputs.",
+        "Use customer-level usage aggregation as a base for plan strategy, retention actions and targeted campaigns.",
+        "Monitor usage segments over time to identify changes in customer engagement.",
+        "Extend the analysis with churn, revenue or plan profitability to prioritize commercial actions."
+      ],
+      "solution": "A documented Python notebook and README guide were created to make the analysis reproducible, auditable and portfolio-ready."
+    }
   }
 ]

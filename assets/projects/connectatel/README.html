@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ConnectaTel README</title>
+    <style>
+      body { margin: 0; background: #f6f7f9; color: #111827; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      header { background: #111827; color: white; padding: 34px clamp(20px, 5vw, 70px); }
+      header p { color: #cbd5e1; max-width: 900px; }
+      main { display: grid; gap: 16px; padding: 28px clamp(20px, 5vw, 70px) 60px; }
+      .cell, main > p, main > h1, main > h2, pre { background: white; border: 1px solid #d9dee8; border-radius: 8px; margin: 0; padding: 16px; }
+      h1, h2 { margin-top: 8px; }
+      .label { background: #e2e8f0; color: #334155; font-size: .78rem; font-weight: 800; margin: -16px -16px 14px; padding: 8px 14px; text-transform: uppercase; }
+      .markdown p { line-height: 1.7; margin: 0; }
+      pre { background: #111827; color: #e5e7eb; overflow: auto; }
+      .code pre { border: 0; border-radius: 0; margin: 0 -16px -16px; }
+      code { font-family: Consolas, "Liberation Mono", ui-monospace, monospace; font-size: .9rem; }
+      .bullet { padding-left: 28px; }
+      .tableline { font-family: Consolas, ui-monospace, monospace; }
+    </style>
+  </head>
+  <body>
+    <header><h1>ConnectaTel README</h1><p>Project documentation and reproduction guide.</p></header>
+    <main><h1>ConnectaTel Customer Segmentation Analysis</h1>
+<h2>Project Objective</h2>
+<p>This project analyzes customer behavior for **ConnectaTel**, a telecommunications company operating in Latin America. The goal is to evaluate customer usage patterns, identify data quality issues, segment users based on behavior and age, and translate the findings into actionable business insights for stakeholders.</p>
+<p>The analysis focuses on data registered up to **2024** and supports decisions related to customer segmentation, service usage, plan strategy and commercial opportunities.</p>
+<h2>Datasets Used</h2>
+<p>The analysis uses three CSV datasets:</p>
+<p class='tableline'>| Dataset | Description |</p>
+<p class='tableline'>|---|---|</p>
+<p class='tableline'>| `plans.csv` | Information about available plans, including price, included minutes, included GB and extra usage costs. |</p>
+<p class='tableline'>| `users_latam.csv` | Customer information such as user ID, age, city, registration date, plan and churn-related attributes. |</p>
+<p class='tableline'>| `usage.csv` | Historical usage records, including calls, messages, duration, length and activity type. |</p>
+<h2>Analysis Stages</h2>
+<p>1. **Data Loading and Initial Exploration**</p>
+<p>   - Loaded the three source datasets with `pandas`.</p>
+<p>   - Reviewed structure, row counts, column types and initial samples.</p>
+<p>   - Identified the main entities: plans, users and usage events.</p>
+<p>2. **Data Quality Assessment**</p>
+<p>   - Detected missing values across customer and usage fields.</p>
+<p>   - Reviewed invalid sentinel values such as `-999` for age and `?` for city.</p>
+<p>   - Identified future registration dates outside the expected 2024 business context.</p>
+<p>3. **Data Cleaning**</p>
+<p>   - Replaced invalid age sentinel values with the median.</p>
+<p>   - Converted invalid city values into missing values.</p>
+<p>   - Flagged or nullified out-of-range registration dates.</p>
+<p>   - Evaluated missing values in `duration` and `length` based on usage type.</p>
+<p>4. **Feature Engineering**</p>
+<p>   - Created usage indicators for calls and text messages.</p>
+<p>   - Aggregated customer-level metrics:</p>
+<p>     - total messages</p>
+<p>     - total calls</p>
+<p>     - total call minutes</p>
+<p>   - Combined usage metrics with customer profile data.</p>
+<p>5. **Exploratory Data Analysis**</p>
+<p>   - Reviewed customer distributions by age, usage level and plan.</p>
+<p>   - Built histograms and boxplots to understand usage patterns and outliers.</p>
+<p>   - Evaluated whether outliers should be kept or investigated further.</p>
+<p>6. **Customer Segmentation**</p>
+<p>   - Classified customers by usage behavior:</p>
+<p>     - Low usage</p>
+<p>     - Medium usage</p>
+<p>     - High usage</p>
+<p>   - Classified customers by age group:</p>
+<p>     - Young</p>
+<p>     - Adult</p>
+<p>     - Older adult</p>
+<p>7. **Executive Insight for Stakeholders**</p>
+<p>   - Summarized data quality issues, customer behavior patterns and business opportunities.</p>
+<p>   - Translated technical findings into recommendations for customer strategy and operational improvement.</p>
+<h2>Tools and Libraries</h2>
+<p class='bullet'>• Python</p>
+<p class='bullet'>• pandas</p>
+<p class='bullet'>• matplotlib</p>
+<p class='bullet'>• seaborn</p>
+<p class='bullet'>• Jupyter Notebook / Google Colab</p>
+<h2>How to Run the Notebook</h2>
+<p>### Option 1: Google Colab</p>
+<p>1. Download the notebook file:</p>
+<p>   `connectatel_customer_segmentation.ipynb`</p>
+<p>2. Open [Google Colab](https://colab.research.google.com/).</p>
+<p>3. Select **File &gt; Upload notebook**.</p>
+<p>4. Upload the notebook.</p>
+<p>5. Upload the required CSV files into the Colab runtime:</p>
+<p>   - `plans.csv`</p>
+<p>   - `users_latam.csv`</p>
+<p>   - `usage.csv`</p>
+<p>6. If needed, update the file paths in the notebook from:</p>
+<p>   `/datasets/plans.csv`</p>
+<p>   to the location where the files were uploaded in Colab.</p>
+<p>7. Run the notebook from top to bottom.</p>
+<p>### Option 2: Local Jupyter Notebook</p>
+<p>1. Install the required libraries:</p>
+<pre><code>
+pip install pandas matplotlib seaborn
+</code></pre>
+<p>2. Place the datasets in a local folder named `datasets`.</p>
+<p>3. Update the file paths if necessary.</p>
+<p>4. Open the notebook:</p>
+<pre><code>
+jupyter notebook connectatel_customer_segmentation.ipynb
+</code></pre>
+<p>5. Run all cells sequentially.</p>
+<h2>Reproduction Guide</h2>
+<p>To reproduce the analysis:</p>
+<p>1. Clone or download the project files.</p>
+<p>2. Ensure the notebook and datasets are available in the expected folder structure.</p>
+<p>3. Install the required Python libraries.</p>
+<p>4. Open the notebook in Google Colab or Jupyter Notebook.</p>
+<p>5. Run the notebook in order:</p>
+<p>   - load datasets</p>
+<p>   - inspect data structure</p>
+<p>   - clean sentinel and invalid values</p>
+<p>   - aggregate usage metrics by user</p>
+<p>   - generate visualizations</p>
+<p>   - create customer segments</p>
+<p>   - review executive conclusions</p>
+<h2>Business Value</h2>
+<p>This project demonstrates the ability to transform raw telecom usage data into a structured customer view. It connects data quality, usage behavior and segmentation to practical business questions such as:</p>
+<p class='bullet'>• Which customer groups represent the highest usage?</p>
+<p class='bullet'>• Which data quality issues could affect business decisions?</p>
+<p class='bullet'>• How can customer behavior support plan strategy or retention actions?</p>
+<p class='bullet'>• What insights should be communicated to stakeholders?</p>
+<h2>Project Status</h2>
+<p>Applied analytics project with technical evidence available through the notebook and README documentation.</p></main>
+  </body>
+</html>
