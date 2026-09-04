@@ -559,7 +559,7 @@ const projectMatches = (project) => {
 };
 
 const renderMetrics = () => {
-  const evidence = projects.filter((project) => project.workbook || project.notebook || project.code || project.readme).length;
+  const evidence = projects.filter((project) => project.workbook || project.notebook || project.code || project.readme || project.reportPdf || project.powerBi).length;
   const stack = new Set(projects.flatMap((project) => project.stack));
 
   document.querySelector("#metric-total").textContent = projects.length;
@@ -685,6 +685,9 @@ const openProject = (projectId) => {
     ${project.code ? `<button type="button" data-code="${project.id}">Ver SQL</button>` : ""}
     ${project.workbook ? `<button type="button" data-workbook="${project.id}">Ver workbook</button>` : ""}
     ${project.notebook ? `<button type="button" data-notebook="${project.id}">Ver notebook</button>` : ""}
+    ${project.reportPdf ? `<a href="${project.reportPdf}" target="_blank" rel="noreferrer">Ver reporte PDF</a>` : ""}
+    ${project.reportPdf ? `<button type="button" data-download-path="${project.reportPdf}" data-download-name="${project.reportPdf.split("/").pop()}">Descargar PDF</button>` : ""}
+    ${project.powerBi ? `<button type="button" data-download-path="${project.powerBi}" data-download-name="${project.powerBi.split("/").pop()}">Descargar PBIX</button>` : ""}
     ${project.readmeView ? `<a href="${project.readmeView}" target="_blank" rel="noreferrer">Ver README</a>` : ""}
     ${project.readme ? `<button type="button" data-download-path="${project.readme}" data-download-name="${project.readme.split("/").pop()}">Descargar README</button>` : ""}
   `.trim();

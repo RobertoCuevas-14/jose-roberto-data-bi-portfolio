@@ -567,5 +567,279 @@
       ],
       "solution": "A documented Python notebook and README guide were created to make the analysis reproducible, auditable and portfolio-ready."
     }
+  },
+  {
+    "id": "andes-retail-commercial-performance",
+    "name": "Andes Retail Commercial Performance Dashboard",
+    "category": "Power BI / Commercial Analytics",
+    "status": "Evidence Available",
+    "year": "2026",
+    "summary": "Executive Power BI dashboard and analytical notebook to evaluate commercial performance across countries, categories, customer segments and seasonality for Andes Retail Group.",
+    "result": "Delivered an executive view of $5.53M in revenue, $1.94M in profit, 35.1% margin and 5,000 orders, translating performance patterns into stakeholder-ready recommendations.",
+    "stack": [
+      "Power BI",
+      "Power Query",
+      "DAX",
+      "Python",
+      "Jupyter Notebook",
+      "Excel / CSV data modeling"
+    ],
+    "tags": [
+      "Power BI",
+      "Executive Dashboard",
+      "Commercial Analytics",
+      "KPIs",
+      "Jupyter Notebook"
+    ],
+    "repo": "",
+    "demo": "",
+    "reportPdf": "assets/reports/andes_retail_commercial_dashboard.pdf",
+    "powerBi": "assets/powerbi/andes_retail_commercial_dashboard.pbix",
+    "notebook": "assets/notebooks/andes_retail_commercial_performance.ipynb",
+    "notebookView": "assets/notebooks/andes_retail_commercial_performance.html",
+    "readme": "assets/projects/andes-retail/README.md",
+    "readmeView": "assets/projects/andes-retail/README.html",
+    "preview": "assets/previews/andes_retail_dashboard_preview.png",
+    "gallery": [
+      "assets/previews/andes_retail_dashboard_context.png"
+    ],
+    "visual": "linear-gradient(135deg, #111827 0%, #0f766e 46%, #f59e0b 100%)",
+    "filterGroup": "BI & Reporting",
+    "role": "BI Analyst / Power BI Developer",
+    "contribution": "Structured the executive dashboard, defined KPI views, documented the analytical narrative and connected commercial performance indicators with actionable business recommendations.",
+    "learning": "Strengthened dashboard storytelling by combining KPI monitoring, segment analysis, seasonality and executive communication through SCQA narrative.",
+    "caseStudy": {
+      "context": "Applied capstone project focused on Andes Retail Group commercial performance during 2024-2025, combining Power BI dashboarding with a supporting analytical notebook.",
+      "problem": "Stakeholders needed a clear view of commercial performance across countries, product categories, customer segments and seasons to understand where value was generated and where growth opportunities existed.",
+      "objective": "Build an executive dashboard that monitors revenue, profit, margin, orders and average ticket, while supporting business decisions through segment, country, category and seasonality analysis.",
+      "tools": [
+        "Power BI Desktop for dashboard design and KPI reporting",
+        "Power Query / data modeling for preparation of commercial fields",
+        "DAX-style KPI logic for executive metrics",
+        "Jupyter Notebook for analytical planning, documentation and business narrative",
+        "PDF export for recruiter-friendly dashboard preview"
+      ],
+      "kpis": [
+        "Revenue: $5.53M",
+        "Profit: $1.94M",
+        "Margin: 35.1%",
+        "Orders: 5,000",
+        "Average ticket: $1,106",
+        "Profit by country",
+        "Revenue by category",
+        "Revenue and ticket by customer segment",
+        "Seasonality performance"
+      ],
+      "dashboardIdeas": [
+        "Executive overview with headline KPIs and trend analysis",
+        "Profitability view by country and product category",
+        "Segment analysis comparing revenue and average ticket",
+        "Seasonality view to identify stronger and weaker commercial periods",
+        "Detailed table for drill-down by country, segment and category"
+      ],
+      "analysisProcess": "The work started with commercial field exploration, KPI definition and dashboard planning. The Power BI report was structured into an executive overview and a detailed analysis page. The notebook documented the business questions, visual choices and SCQA narrative for stakeholder communication.",
+      "automation": "The dashboard centralizes recurring KPI views and reduces manual reporting effort by organizing metrics, filters and visual analysis in a reusable Power BI file. PDF export enables lightweight review without requiring Power BI access.",
+      "insights": [
+        "Andes Retail generated $5.53M in revenue and $1.94M in profit across 5,000 orders.",
+        "The global margin reached 35.1%, with profitability remaining relatively stable across countries.",
+        "Peru led profit generation, indicating a strong commercial position in that market.",
+        "Sports was the highest revenue category, while Premium customers generated the strongest value and average ticket.",
+        "Summer showed the strongest commercial performance, while Winter represented the weakest seasonal period.",
+        "Economic segment performance suggests an opportunity for targeted growth initiatives."
+      ],
+      "impact": "The project translates commercial data into an executive decision tool, helping stakeholders prioritize markets, categories, customer segments and seasonal actions with a clear KPI narrative.",
+      "recommendations": [
+        "Protect and expand Premium segment initiatives due to higher value and average ticket.",
+        "Use Peru as a reference market for commercial practices and growth playbooks.",
+        "Strengthen Sports category planning given its revenue leadership.",
+        "Design seasonal actions to close the performance gap during Winter.",
+        "Develop targeted campaigns for the Economic segment to increase contribution without diluting margin."
+      ],
+      "solution": "A Power BI executive dashboard, PDF report and supporting notebook were packaged as portfolio-ready evidence of business intelligence, dashboard storytelling and analytical communication."
+    }
+  },
+  {
+    "id": "andes-capital-real-estate-dashboard",
+    "name": "Andes Capital Real Estate Dashboard",
+    "category": "Power BI / Real Estate Analytics",
+    "status": "Evidence Available",
+    "year": "2026",
+    "summary": "Executive Power BI dashboard for real estate commercial performance, covering revenue, sales volume, average ticket, commissions, channels, property types, customer segments and cohort retention.",
+    "result": "Delivered a decision-ready view of $6.01B in revenue, 8,500 sales, $707K average ticket, $201M in commissions and 11.1% YoY growth.",
+    "stack": [
+      "Power BI",
+      "Power Query",
+      "DAX",
+      "Data Modeling",
+      "Jupyter Notebook",
+      "Cohort Analysis"
+    ],
+    "tags": [
+      "Power BI",
+      "Real Estate Analytics",
+      "Executive Dashboard",
+      "Data Modeling",
+      "Cohort Analysis"
+    ],
+    "repo": "",
+    "demo": "",
+    "reportPdf": "assets/reports/andes_capital_real_estate_dashboard.pdf",
+    "powerBi": "assets/powerbi/andes_capital_real_estate_dashboard.pbix",
+    "notebook": "assets/notebooks/andes_capital_real_estate_analysis.ipynb",
+    "notebookView": "assets/notebooks/andes_capital_real_estate_analysis.html",
+    "readme": "assets/projects/andes-capital/README.md",
+    "readmeView": "assets/projects/andes-capital/README.html",
+    "preview": "assets/previews/andes_capital_real_estate_preview.png",
+    "gallery": [
+      "assets/previews/andes_capital_real_estate_commercial_context.png",
+      "assets/previews/andes_capital_real_estate_cohort_context.png"
+    ],
+    "visual": "linear-gradient(135deg, #111827 0%, #7c3aed 44%, #14b8a6 100%)",
+    "filterGroup": "BI & Reporting",
+    "role": "BI Analyst / Power BI Developer",
+    "contribution": "Designed a star-schema analytics model, structured executive KPI views, created commercial and cohort dashboard pages, and documented business findings for stakeholder decision-making.",
+    "learning": "Strengthened real estate analytics storytelling by connecting dimensional modeling, KPI design, channel performance, customer segmentation and cohort retention.",
+    "caseStudy": {
+      "context": "Applied capstone project focused on commercial performance for Andes Capital Real Estate, using a dimensional sales model and Power BI dashboarding.",
+      "problem": "The business needed a consolidated view of property sales performance to understand revenue drivers, commercial channels, buyer segments, property types and customer retention patterns.",
+      "objective": "Build an executive dashboard that monitors core real estate KPIs and supports strategic decisions across sales performance, channel mix, buyer segmentation and post-sale retention.",
+      "tools": [
+        "Power BI Desktop for dashboard development",
+        "Power Query and data modeling for fact/dimension preparation",
+        "DAX measures for revenue, sales, commissions, average ticket and YoY growth",
+        "Jupyter Notebook for analytical documentation and project narrative",
+        "PDF export for recruiter-friendly visual review"
+      ],
+      "kpis": [
+        "Total revenue: $6.01B",
+        "Sales volume: 8,500",
+        "Average ticket: $707K",
+        "Total commission: $201M",
+        "YoY growth: 11.1%",
+        "Revenue by channel",
+        "Revenue by property type",
+        "Revenue by buyer segment",
+        "Retention M1, M3 and M6"
+      ],
+      "dashboardIdeas": [
+        "Executive overview with revenue, sales, average ticket, commission and YoY growth",
+        "Commercial analysis by channel, buyer segment, property type and city",
+        "Published price versus sale price by property type",
+        "Cohort analysis to monitor retention by acquisition month and customer age",
+        "Detailed table for drill-down by commercial dimension"
+      ],
+      "analysisProcess": "The project included data cleaning, calendar table creation, star-schema modeling, measure design and dashboard construction. The report was structured into executive overview, commercial analysis and cohort retention views.",
+      "automation": "The Power BI model centralizes KPI logic and reusable filters, reducing manual consolidation for recurring commercial performance review. The PDF export allows stakeholders to review the dashboard without Power BI access.",
+      "insights": [
+        "Andes Capital generated $6.01B in revenue across 8,500 property sales.",
+        "The average ticket reached $707K and commissions totaled $201M.",
+        "Casa generated the highest revenue, with approximately $2.24B.",
+        "Bogota led sales volume, slightly above Mexico City.",
+        "The broker channel concentrated approximately 72.8% of revenue.",
+        "First-time buyers represented the strongest revenue segment.",
+        "Retention around M1, M3 and M6 stayed near 9%, signaling room to strengthen customer relationship strategies."
+      ],
+      "impact": "The dashboard translates real estate sales data into an executive decision tool, helping stakeholders prioritize channels, property types, buyer segments and retention strategies.",
+      "recommendations": [
+        "Protect the broker channel while developing diversification scenarios for direct sales.",
+        "Prioritize inventory and commercial actions around house-type properties due to revenue leadership.",
+        "Strengthen first-time buyer acquisition journeys because of their revenue contribution.",
+        "Investigate retention drivers and post-sale engagement opportunities to improve M1, M3 and M6 performance.",
+        "Use city-level performance to refine sales targets and resource allocation."
+      ],
+      "solution": "A Power BI dashboard, PDF report, notebook and README were packaged as portfolio-ready evidence of real estate BI, dimensional modeling and executive analytics."
+    }
+  },
+  {
+    "id": "rappiplus-business-performance-dashboard",
+    "name": "RappiPlus Business Performance Dashboard",
+    "category": "Power BI / Product & Growth Analytics",
+    "status": "Evidence Available",
+    "year": "2026",
+    "summary": "Integrated analytics project combining Python, SQL and Power BI to evaluate revenue, profitability, marketing efficiency, customer behavior, funnel conversion, retention and A/B testing for RappiPlus.",
+    "result": "Delivered a business-ready view of $9.61M in revenue, $2.91M profit, 30.27% margin, $2.87M marketing investment and product-level profitability opportunities.",
+    "stack": [
+      "Power BI",
+      "Python",
+      "Pandas",
+      "SQL",
+      "A/B Testing",
+      "Jupyter Notebook",
+      "Statsmodels"
+    ],
+    "tags": [
+      "Power BI",
+      "Product Analytics",
+      "Profitability",
+      "Funnel Analysis",
+      "A/B Testing"
+    ],
+    "repo": "",
+    "demo": "",
+    "reportPdf": "assets/reports/rappiplus_business_performance_dashboard.pdf",
+    "powerBi": "assets/powerbi/rappiplus_business_performance_dashboard.pbix",
+    "notebook": "assets/notebooks/rappiplus_business_performance_analysis.ipynb",
+    "notebookView": "assets/notebooks/rappiplus_business_performance_analysis.html",
+    "readme": "assets/projects/rappiplus/README.md",
+    "readmeView": "assets/projects/rappiplus/README.html",
+    "preview": "assets/previews/rappiplus_business_performance_preview.png",
+    "gallery": [
+      "assets/previews/rappiplus_customer_analysis_context.png",
+      "assets/previews/rappiplus_product_profitability_context.png"
+    ],
+    "visual": "linear-gradient(135deg, #111827 0%, #16a34a 45%, #f97316 100%)",
+    "filterGroup": "BI & Reporting",
+    "role": "Data Analyst / BI Developer",
+    "contribution": "Cleaned and modeled transactional, catalog and marketing datasets, calculated profitability KPIs, queried funnel and retention behavior, evaluated checkout experimentation and built executive Power BI views.",
+    "learning": "Strengthened end-to-end analytics delivery by connecting data quality, SQL behavior analysis, statistical validation and dashboard storytelling.",
+    "caseStudy": {
+      "context": "Final applied analytics project for RappiPlus, focused on translating commercial, product, marketing and behavioral data into business decisions.",
+      "problem": "The business needed to understand whether RappiPlus was profitable, where revenue was generated, how customers behaved, where users dropped in the funnel and whether a checkout UI change created measurable conversion impact.",
+      "objective": "Build an end-to-end analytics solution that combines data cleaning, profitability analysis, funnel analysis, retention cohorts, A/B testing and executive dashboarding.",
+      "tools": [
+        "Python and Pandas for data cleaning, joins and KPI calculation",
+        "SQL for funnel and cohort behavior analysis",
+        "Statsmodels for two-proportion Z test in the checkout experiment",
+        "Power BI Desktop for executive dashboard design",
+        "PDF export for recruiter-friendly dashboard review"
+      ],
+      "kpis": [
+        "Total revenue: $9.61M",
+        "Total profit: $2.91M",
+        "Profit margin: 30.27%",
+        "Marketing investment: $2.87M",
+        "Average ticket: $385.85",
+        "Product cost: $3.83M",
+        "Units sold: 37K",
+        "Products per order: 1.50",
+        "Conversion uplift tested: +0.60 pp"
+      ],
+      "dashboardIdeas": [
+        "Executive performance overview with revenue, profit, margin, marketing investment and ticket",
+        "Customer analysis by country, device, acquisition source and order frequency",
+        "Product profitability view by revenue, gross margin and units sold",
+        "Funnel and conversion analysis using SQL event data",
+        "Experimentation summary for checkout UI decision-making"
+      ],
+      "analysisProcess": "The project started with data quality validation across orders, catalog and marketing datasets. After cleaning dates, categories, nulls, duplicates and invalid quantities, orders were joined with catalog costs to calculate profitability. SQL was used to analyze funnel and retention, and an A/B test evaluated checkout UI impact. The final Power BI dashboard summarized business performance, customers and product profitability.",
+      "automation": "Clean datasets were exported for dashboard consumption, and reusable KPI definitions were structured to support recurring revenue, profitability, customer and product performance reviews.",
+      "insights": [
+        "RappiPlus generated $9.61M in revenue and $2.91M in profit, with a 30.27% profit margin.",
+        "Marketing investment reached $2.87M, making marketing efficiency an important profitability lever.",
+        "Revenue participation was balanced across Hogar, Electronica and Moda.",
+        "Desktop and mobile revenue distribution was nearly even, indicating similar commercial relevance by device.",
+        "Laptop-Gaming-16GB showed negative gross margin, creating a clear pricing or cost-risk signal.",
+        "The checkout UI treatment improved conversion by 0.60 percentage points, but the result was not statistically significant."
+      ],
+      "impact": "The project gives stakeholders a complete view of commercial health, combining financial KPIs, customer behavior, product profitability and experimentation evidence in one decision framework.",
+      "recommendations": [
+        "Review pricing, discounting or cost structure for products with negative or weak margin.",
+        "Monitor marketing efficiency by channel and country to protect profitability.",
+        "Avoid rolling out the checkout UI change based only on the current A/B test due to lack of statistical significance.",
+        "Use device and acquisition-source analysis to refine growth campaigns.",
+        "Continue tracking funnel and retention metrics to identify operational and product experience bottlenecks."
+      ],
+      "solution": "A Power BI dashboard, PDF report, cleaned notebook and README were packaged as portfolio-ready evidence of product analytics, business intelligence, profitability analysis and statistical decision-making."
+    }
   }
 ]

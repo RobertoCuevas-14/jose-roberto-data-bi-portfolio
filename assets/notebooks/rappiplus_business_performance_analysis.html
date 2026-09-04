@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RappiPlus Business Performance Analysis Notebook</title>
+    <style>
+      body { margin:0; background:#f6f7f9; color:#111827; font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      header { background:#111827; color:white; padding:34px clamp(20px,5vw,70px); }
+      header p { color:#cbd5e1; max-width:900px; line-height:1.6; }
+      main { display:grid; gap:16px; padding:28px clamp(20px,5vw,70px) 60px; }
+      .cell { background:white; border:1px solid #d9dee8; border-radius:8px; overflow:hidden; }
+      .label { background:#e2e8f0; color:#334155; font-size:.78rem; font-weight:800; padding:8px 14px; text-transform:uppercase; }
+      .markdown p { line-height:1.7; margin:0; padding:16px; white-space:pre-wrap; }
+      pre { background:#111827; color:#e5e7eb; line-height:1.55; margin:0; overflow:auto; padding:16px; }
+      code { font-family:Consolas, "Liberation Mono", ui-monospace, monospace; font-size:.9rem; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>RappiPlus Business Performance Analysis</h1>
+      <p>Vista HTML limpia del notebook para revisión rápida en portafolio. Se removieron credenciales, links de entrega y outputs antes de publicarlo.</p>
+    </header>
+    <main><section class='cell markdown'><div class='label'>Markdown</div><p># Proyecto RappiPlus: de datos a decisiones de negocio **Introducción** El objetivo de este proyecto es evaluar el desempeño del servicio **RappiPlus** para apoyar **decisiones de negocio basadas en datos**. Se trabajan con múltiples datasets del negocio: - **rappiplus_orders_raw.csv** → información de pedidos, precios, descuentos y revenue - **rappiplus_catalog.csv** → costos de productos, categorías y proveedores - **rappiplus_marketing_spend.csv** → inversión en marketing por canal y país - **events / users / user_activity (SQL)** → comportamiento del usuario dentro de la plataforma - **experiment_checkout_ui.csv** → resultados de un experimento A/B en el checkout El análisis sigue una lógica clara y progresiva: 1. 🔍 Evaluar si podemos confiar en los datos (calidad de datos en Python) 2. 💰 Analizar si el negocio es rentable (revenue, costos y profit) 3. 🛒 Entender dónde se pierden los usuarios (funnel de conversión) 4. 🔁 Evaluar si los usuarios regresan (retención por cohortes) 5. 🧪 Validar si los cambios generan impacto (test estadístico) 6. 📊 Comunicar los resultados (dashboard en BI) A lo largo del proyecto, se transforman datos en insights para responder preguntas clave del negocio y proponer **recomendaciones accionables**.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>---</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>## 🔹 Paso 1: Cargar y validar la calidad de los datos --- ### 1.1 Carga de datos y vista rápida **🎯 Objetivo:** Familiarizarte con la estructura de los datasets del negocio antes de analizarlos. **Instrucciones:** - Importa las librerías necesarias - Carga los archivos: - `rappiplus_orders_raw.csv` - `rappiplus_catalog.csv` - `rappiplus_marketing_spend.csv` - Guarda los DataFrames en: - `orders`, `catalog`, `marketing` - Explora cada dataset. ---</p></section><section class='cell code'><div class='label'>Code</div><pre><code># importar librerías
+import pandas as pd
+import numpy as np</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># cargar archivos
+
+orders = pd.read_csv(
+    &#x27;https://practicum-content.s3.amazonaws.com/datasets/rappiplus_orders_raw.csv&#x27;
+)
+
+catalog = pd.read_csv(
+    &#x27;https://practicum-content.s3.amazonaws.com/datasets/rappiplus_catalog.csv&#x27;
+)
+
+marketing = pd.read_csv(
+    &#x27;https://practicum-content.s3.amazonaws.com/datasets/rappiplus_marketing_spend.csv&#x27;
+)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># explorar datasets
+
+print(&quot;ORDERS&quot;)
+display(orders.head())
+print(&quot;Dimensiones:&quot;, orders.shape)
+orders.info()
+
+print(&quot;\n&quot; + &quot;=&quot;*60 + &quot;\n&quot;)
+
+print(&quot;CATALOG&quot;)
+display(catalog.head())
+print(&quot;Dimensiones:&quot;, catalog.shape)
+catalog.info()
+
+print(&quot;\n&quot; + &quot;=&quot;*60 + &quot;\n&quot;)
+
+print(&quot;MARKETING&quot;)
+display(marketing.head())
+print(&quot;Dimensiones:&quot;, marketing.shape)
+marketing.info()</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># diagnóstico de calidad de datos
+
+# 1. Valores nulos
+print(&quot;=== VALORES NULOS ===&quot;)
+
+print(&quot;\nORDERS&quot;)
+display(orders.isna().sum().to_frame(&quot;nulos&quot;))
+
+print(&quot;\nCATALOG&quot;)
+display(catalog.isna().sum().to_frame(&quot;nulos&quot;))
+
+print(&quot;\nMARKETING&quot;)
+display(marketing.isna().sum().to_frame(&quot;nulos&quot;))
+
+
+# 2. Duplicados
+print(&quot;\n=== DUPLICADOS ===&quot;)
+print(&quot;Orders:&quot;, orders.duplicated().sum())
+print(&quot;Catalog:&quot;, catalog.duplicated().sum())
+print(&quot;Marketing:&quot;, marketing.duplicated().sum())
+
+
+# 3. Valores categóricos relevantes
+print(&quot;\n=== CATEGORÍAS EN ORDERS ===&quot;)
+
+for col in [
+    &quot;pais&quot;,
+    &quot;dispositivo&quot;,
+    &quot;fuente_referencia&quot;,
+    &quot;categoria_producto&quot;
+]:
+    print(f&quot;\n{col}:&quot;)
+    print(orders[col].value_counts(dropna=False))
+
+
+print(&quot;\n=== CATEGORÍAS EN CATALOG ===&quot;)
+print(catalog[&quot;categoria_producto&quot;].value_counts(dropna=False))
+
+
+print(&quot;\n=== CATEGORÍAS EN MARKETING ===&quot;)
+
+for col in [&quot;pais&quot;, &quot;canal&quot;]:
+    print(f&quot;\n{col}:&quot;)
+    print(marketing[col].value_counts(dropna=False))
+
+
+# 4. Revisión de variables numéricas
+print(&quot;\n=== VARIABLES NUMÉRICAS DE ORDERS ===&quot;)
+display(
+    orders[
+        [&quot;cantidad&quot;, &quot;precio_unitario&quot;, &quot;monto_descuento&quot;, &quot;monto_total&quot;]
+    ].describe()
+)
+
+print(&quot;\n=== COSTOS DEL CATÁLOGO ===&quot;)
+display(catalog[&quot;costo_unitario&quot;].describe())
+
+print(&quot;\n=== GASTO DE MARKETING ===&quot;)
+display(marketing[&quot;gasto&quot;].describe())</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># investigar anomalías antes de limpiar
+
+# 1. Cantidades inválidas o extremas
+print(&quot;=== CANTIDADES &lt;= 0 ===&quot;)
+display(
+    orders.loc[
+        orders[&quot;cantidad&quot;] &lt;= 0,
+        [
+            &quot;id_pedido&quot;, &quot;id_usuario&quot;, &quot;nombre_producto&quot;,
+            &quot;cantidad&quot;, &quot;precio_unitario&quot;,
+            &quot;monto_descuento&quot;, &quot;monto_total&quot;
+        ]
+    ]
+)
+
+print(&quot;\n=== CANTIDADES MAYORES A 10 ===&quot;)
+display(
+    orders.loc[
+        orders[&quot;cantidad&quot;] &gt; 10,
+        [
+            &quot;id_pedido&quot;, &quot;id_usuario&quot;, &quot;nombre_producto&quot;,
+            &quot;cantidad&quot;, &quot;precio_unitario&quot;,
+            &quot;monto_descuento&quot;, &quot;monto_total&quot;
+        ]
+    ].sort_values(&quot;cantidad&quot;, ascending=False)
+)
+
+
+# 2. Totales negativos
+print(&quot;\n=== MONTOS TOTALES NEGATIVOS ===&quot;)
+display(
+    orders.loc[
+        orders[&quot;monto_total&quot;] &lt; 0,
+        [
+            &quot;id_pedido&quot;, &quot;nombre_producto&quot;,
+            &quot;cantidad&quot;, &quot;precio_unitario&quot;,
+            &quot;monto_descuento&quot;, &quot;monto_total&quot;
+        ]
+    ]
+)
+
+
+# 3. Revisar coherencia de la fórmula del pedido
+orders_revision = orders.copy()
+
+orders_revision[&quot;total_calculado&quot;] = (
+    orders_revision[&quot;cantidad&quot;] *
+    orders_revision[&quot;precio_unitario&quot;] -
+    orders_revision[&quot;monto_descuento&quot;]
+)
+
+orders_revision[&quot;diferencia_total&quot;] = (
+    orders_revision[&quot;monto_total&quot;] -
+    orders_revision[&quot;total_calculado&quot;]
+)
+
+print(&quot;\n=== DIFERENCIAS ENTRE MONTO TOTAL Y TOTAL CALCULADO ===&quot;)
+display(
+    orders_revision.loc[
+        orders_revision[&quot;diferencia_total&quot;].abs() &gt; 0.02,
+        [
+            &quot;id_pedido&quot;, &quot;cantidad&quot;, &quot;precio_unitario&quot;,
+            &quot;monto_descuento&quot;, &quot;monto_total&quot;,
+            &quot;total_calculado&quot;, &quot;diferencia_total&quot;
+        ]
+    ].head(30)
+)
+
+print(
+    &quot;Filas con diferencia:&quot;,
+    (orders_revision[&quot;diferencia_total&quot;].abs() &gt; 0.02).sum()
+)
+
+
+# 4. Revisar los nulos de canal en marketing
+print(&quot;\n=== MARKETING CON CANAL NULO ===&quot;)
+display(marketing[marketing[&quot;canal&quot;].isna()].head(20))
+
+print(&quot;\nCampañas asociadas a canal nulo:&quot;)
+print(
+    marketing.loc[
+        marketing[&quot;canal&quot;].isna(),
+        &quot;id_campaña&quot;
+    ].value_counts().head(20)
+)
+
+
+# 5. Revisar duplicados exactos en orders
+print(&quot;\n=== EJEMPLO DE DUPLICADOS EN ORDERS ===&quot;)
+display(
+    orders[
+        orders.duplicated(keep=False)
+    ].sort_values(&quot;id_pedido&quot;).head(20)
+)</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>---</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>### Revisión y calidad de datos **🎯 Objetivo:** Detectar y corregir problemas en los datos que puedan afectar el análisis de revenue, costos y rentabilidad. Se revisan los 3 datasets - Validar y convertir fechas al formato correcto - Revisar variables numéricas (sin negativos o ceros inválidos) - Verificar consistencia de montos - Eliminar duplicados - Revisar variables categóricas ---</p></section><section class='cell code'><div class='label'>Code</div><pre><code># tu código aquí
+# limpieza del dataset orders
+
+orders_clean = orders.copy()
+
+# 1. Convertir fecha al tipo correcto
+orders_clean[&quot;fecha_hora_pedido&quot;] = pd.to_datetime(
+    orders_clean[&quot;fecha_hora_pedido&quot;],
+    errors=&quot;coerce&quot;
+)
+
+# 2. Eliminar duplicados exactos
+orders_clean = orders_clean.drop_duplicates().copy()
+
+# 3. Estandarizar países
+orders_clean[&quot;pais&quot;] = (
+    orders_clean[&quot;pais&quot;]
+    .str.strip()
+    .str.capitalize()
+)
+
+# 4. Estandarizar categoría de producto
+orders_clean[&quot;categoria_producto&quot;] = (
+    orders_clean[&quot;categoria_producto&quot;]
+    .replace({&quot;Electronica&quot;: &quot;Electrónica&quot;})
+)
+
+# 5. Eliminar cantidades inválidas o extremadamente anómalas
+orders_clean = orders_clean[
+    (orders_clean[&quot;cantidad&quot;].isna()) |
+    ((orders_clean[&quot;cantidad&quot;] &gt; 0) &amp;
+     (orders_clean[&quot;cantidad&quot;] &lt;= 10))
+].copy()
+
+print(&quot;Filas originales:&quot;, len(orders))
+print(&quot;Filas después de limpieza inicial:&quot;, len(orders_clean))
+
+print(&quot;\nDuplicados restantes:&quot;)
+print(orders_clean.duplicated().sum())
+
+print(&quot;\nPaíses:&quot;)
+print(orders_clean[&quot;pais&quot;].value_counts(dropna=False))
+
+print(&quot;\nCategorías:&quot;)
+print(orders_clean[&quot;categoria_producto&quot;].value_counts(dropna=False))
+
+print(&quot;\nCantidad:&quot;)
+display(orders_clean[&quot;cantidad&quot;].describe())
+
+print(&quot;\nTipo de fecha:&quot;)
+print(orders_clean[&quot;fecha_hora_pedido&quot;].dtype)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># revisar si los valores nulos pueden recuperarse
+
+print(&quot;=== NULOS ACTUALES EN ORDERS ===&quot;)
+display(orders_clean.isna().sum().to_frame(&quot;nulos&quot;))
+
+# Revisar productos disponibles en el catálogo
+print(&quot;\n=== PRODUCTOS DEL CATÁLOGO ===&quot;)
+display(
+    catalog[
+        [&quot;nombre_producto&quot;, &quot;categoria_producto&quot;]
+    ].sort_values(&quot;nombre_producto&quot;)
+)
+
+# Registros donde falta categoría pero existe producto
+print(&quot;\n=== CATEGORÍA NULA CON PRODUCTO DISPONIBLE ===&quot;)
+display(
+    orders_clean.loc[
+        orders_clean[&quot;categoria_producto&quot;].isna()
+        &amp; orders_clean[&quot;nombre_producto&quot;].notna(),
+        [&quot;nombre_producto&quot;, &quot;categoria_producto&quot;]
+    ].head(20)
+)
+
+# Registros donde falta producto
+print(&quot;\n=== PRODUCTO NULO ===&quot;)
+display(
+    orders_clean.loc[
+        orders_clean[&quot;nombre_producto&quot;].isna(),
+        [
+            &quot;id_pedido&quot;,
+            &quot;categoria_producto&quot;,
+            &quot;cantidad&quot;,
+            &quot;precio_unitario&quot;,
+            &quot;monto_total&quot;
+        ]
+    ].head(20)
+)
+
+# Revisar filas con variables numéricas faltantes
+print(&quot;\n=== NULOS NUMÉRICOS ===&quot;)
+display(
+    orders_clean.loc[
+        orders_clean[
+            [&quot;cantidad&quot;, &quot;precio_unitario&quot;, &quot;monto_descuento&quot;]
+        ].isna().any(axis=1),
+        [
+            &quot;id_pedido&quot;,
+            &quot;nombre_producto&quot;,
+            &quot;cantidad&quot;,
+            &quot;precio_unitario&quot;,
+            &quot;monto_descuento&quot;,
+            &quot;monto_total&quot;
+        ]
+    ].head(30)
+)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># completar y finalizar limpieza de orders
+
+# mapa producto -&gt; categoría a partir del catálogo
+mapa_categoria = catalog.set_index(
+    &quot;nombre_producto&quot;
+)[&quot;categoria_producto&quot;]
+
+# recuperar categorías faltantes usando el nombre del producto
+orders_clean[&quot;categoria_producto&quot;] = (
+    orders_clean[&quot;categoria_producto&quot;]
+    .fillna(
+        orders_clean[&quot;nombre_producto&quot;].map(mapa_categoria)
+    )
+)
+
+# eliminar registros sin información esencial para el análisis
+columnas_esenciales = [
+    &quot;nombre_producto&quot;,
+    &quot;categoria_producto&quot;,
+    &quot;cantidad&quot;,
+    &quot;precio_unitario&quot;,
+    &quot;monto_descuento&quot;
+]
+
+orders_clean = (
+    orders_clean
+    .dropna(subset=columnas_esenciales)
+    .copy()
+)
+
+print(&quot;=== VALIDACIÓN FINAL DE ORDERS ===&quot;)
+
+print(&quot;\nDimensiones:&quot;)
+print(orders_clean.shape)
+
+print(&quot;\nValores nulos:&quot;)
+display(orders_clean.isna().sum().to_frame(&quot;nulos&quot;))
+
+print(&quot;\nDuplicados:&quot;)
+print(orders_clean.duplicated().sum())
+
+print(&quot;\nTipos de datos:&quot;)
+print(orders_clean.dtypes)
+
+print(&quot;\nCategorías:&quot;)
+print(
+    orders_clean[&quot;categoria_producto&quot;]
+    .value_counts(dropna=False)
+)
+
+print(&quot;\nCantidad:&quot;)
+display(orders_clean[&quot;cantidad&quot;].describe())</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># completar valores categóricos faltantes
+
+orders_clean[&quot;pais&quot;] = (
+    orders_clean[&quot;pais&quot;]
+    .fillna(&quot;Desconocido&quot;)
+)
+
+orders_clean[&quot;dispositivo&quot;] = (
+    orders_clean[&quot;dispositivo&quot;]
+    .fillna(&quot;Desconocido&quot;)
+)
+
+# convertir cantidad a entero
+orders_clean[&quot;cantidad&quot;] = orders_clean[&quot;cantidad&quot;].astype(int)
+
+print(&quot;=== ORDERS CLEAN ===&quot;)
+print(&quot;Dimensiones:&quot;, orders_clean.shape)
+print(&quot;Nulos totales:&quot;, orders_clean.isna().sum().sum())
+print(&quot;Duplicados:&quot;, orders_clean.duplicated().sum())
+
+print(&quot;\nPaís:&quot;)
+print(orders_clean[&quot;pais&quot;].value_counts())
+
+print(&quot;\nDispositivo:&quot;)
+print(orders_clean[&quot;dispositivo&quot;].value_counts())
+
+print(&quot;\nTipos:&quot;)
+print(orders_clean.dtypes)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># validación y limpieza de catalog
+
+catalog_clean = catalog.copy()
+
+# limpiar espacios en variables categóricas
+for col in [&quot;nombre_producto&quot;, &quot;categoria_producto&quot;, &quot;proveedor&quot;]:
+    catalog_clean[col] = catalog_clean[col].str.strip()
+
+print(&quot;=== CATALOG CLEAN ===&quot;)
+
+print(&quot;\nDimensiones:&quot;)
+print(catalog_clean.shape)
+
+print(&quot;\nValores nulos:&quot;)
+display(catalog_clean.isna().sum().to_frame(&quot;nulos&quot;))
+
+print(&quot;\nDuplicados:&quot;)
+print(catalog_clean.duplicated().sum())
+
+print(&quot;\nProductos duplicados:&quot;)
+print(catalog_clean[&quot;nombre_producto&quot;].duplicated().sum())
+
+print(&quot;\nCostos inválidos (&lt;= 0):&quot;)
+print((catalog_clean[&quot;costo_unitario&quot;] &lt;= 0).sum())
+
+print(&quot;\nCategorías:&quot;)
+print(catalog_clean[&quot;categoria_producto&quot;].value_counts(dropna=False))
+
+print(&quot;\nResumen de costos:&quot;)
+display(catalog_clean[&quot;costo_unitario&quot;].describe())
+
+display(catalog_clean)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># limpieza del dataset marketing
+
+marketing_clean = marketing.copy()
+
+# 1. Convertir fecha
+marketing_clean[&quot;fecha&quot;] = pd.to_datetime(
+    marketing_clean[&quot;fecha&quot;],
+    errors=&quot;coerce&quot;
+)
+
+# 2. Limpiar espacios en variables categóricas
+for col in [&quot;pais&quot;, &quot;id_campaña&quot;, &quot;canal&quot;]:
+    marketing_clean[col] = marketing_clean[col].str.strip()
+
+# 3. Recuperar canales faltantes desde id_campaña
+marketing_clean.loc[
+    marketing_clean[&quot;canal&quot;].isna(),
+    &quot;canal&quot;
+] = (
+    marketing_clean.loc[
+        marketing_clean[&quot;canal&quot;].isna(),
+        &quot;id_campaña&quot;
+    ]
+    .str.rsplit(&quot;_&quot;, n=1)
+    .str[0]
+)
+
+# 4. Validación
+print(&quot;=== MARKETING CLEAN ===&quot;)
+
+print(&quot;\nDimensiones:&quot;)
+print(marketing_clean.shape)
+
+print(&quot;\nValores nulos:&quot;)
+display(marketing_clean.isna().sum().to_frame(&quot;nulos&quot;))
+
+print(&quot;\nDuplicados:&quot;)
+print(marketing_clean.duplicated().sum())
+
+print(&quot;\nCanales:&quot;)
+print(marketing_clean[&quot;canal&quot;].value_counts(dropna=False))
+
+print(&quot;\nPaíses:&quot;)
+print(marketing_clean[&quot;pais&quot;].value_counts(dropna=False))
+
+print(&quot;\nGastos inválidos (&lt;= 0):&quot;)
+print((marketing_clean[&quot;gasto&quot;] &lt;= 0).sum())
+
+print(&quot;\nTipo de fecha:&quot;)
+print(marketing_clean[&quot;fecha&quot;].dtype)
+
+print(&quot;\nResumen del gasto:&quot;)
+display(marketing_clean[&quot;gasto&quot;].describe())</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># limpieza del dataset marketing
+
+marketing_clean = marketing.copy()
+
+# 1. Convertir fecha
+marketing_clean[&quot;fecha&quot;] = pd.to_datetime(
+    marketing_clean[&quot;fecha&quot;],
+    errors=&quot;coerce&quot;
+)
+
+# 2. Limpiar espacios en variables categóricas
+for col in [&quot;pais&quot;, &quot;id_campaña&quot;, &quot;canal&quot;]:
+    marketing_clean[col] = marketing_clean[col].str.strip()
+
+# 3. Recuperar canales faltantes desde id_campaña
+marketing_clean.loc[
+    marketing_clean[&quot;canal&quot;].isna(),
+    &quot;canal&quot;
+] = (
+    marketing_clean.loc[
+        marketing_clean[&quot;canal&quot;].isna(),
+        &quot;id_campaña&quot;
+    ]
+    .str.rsplit(&quot;_&quot;, n=1)
+    .str[0]
+)
+
+# 4. Validación
+print(&quot;=== MARKETING CLEAN ===&quot;)
+
+print(&quot;\nDimensiones:&quot;)
+print(marketing_clean.shape)
+
+print(&quot;\nValores nulos:&quot;)
+display(marketing_clean.isna().sum().to_frame(&quot;nulos&quot;))
+
+print(&quot;\nDuplicados:&quot;)
+print(marketing_clean.duplicated().sum())
+
+print(&quot;\nCanales:&quot;)
+print(marketing_clean[&quot;canal&quot;].value_counts(dropna=False))
+
+print(&quot;\nPaíses:&quot;)
+print(marketing_clean[&quot;pais&quot;].value_counts(dropna=False))
+
+print(&quot;\nGastos inválidos (&lt;= 0):&quot;)
+print((marketing_clean[&quot;gasto&quot;] &lt;= 0).sum())
+
+print(&quot;\nTipo de fecha:&quot;)
+print(marketing_clean[&quot;fecha&quot;].dtype)
+
+print(&quot;\nResumen del gasto:&quot;)
+display(marketing_clean[&quot;gasto&quot;].describe())</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># validación final de los 3 datasets
+
+print(&quot;=== VALIDACIÓN FINAL PASO 1 ===&quot;)
+
+print(&quot;\nORDERS&quot;)
+print(&quot;Filas:&quot;, len(orders_clean))
+print(&quot;Nulos:&quot;, orders_clean.isna().sum().sum())
+print(&quot;Duplicados:&quot;, orders_clean.duplicated().sum())
+
+print(&quot;\nCATALOG&quot;)
+print(&quot;Filas:&quot;, len(catalog_clean))
+print(&quot;Nulos:&quot;, catalog_clean.isna().sum().sum())
+print(&quot;Duplicados:&quot;, catalog_clean.duplicated().sum())
+
+print(&quot;\nMARKETING&quot;)
+print(&quot;Filas:&quot;, len(marketing_clean))
+print(&quot;Nulos:&quot;, marketing_clean.isna().sum().sum())
+print(&quot;Duplicados:&quot;, marketing_clean.duplicated().sum())
+
+# validar que todos los productos de orders existan en catalog
+productos_sin_catalogo = set(
+    orders_clean[&quot;nombre_producto&quot;].unique()
+) - set(
+    catalog_clean[&quot;nombre_producto&quot;].unique()
+)
+
+print(&quot;\nProductos de orders sin correspondencia en catalog:&quot;)
+print(productos_sin_catalogo)
+
+# validar categorías
+print(&quot;\nCategorías Orders:&quot;)
+print(sorted(orders_clean[&quot;categoria_producto&quot;].unique()))
+
+print(&quot;\nCategorías Catalog:&quot;)
+print(sorted(catalog_clean[&quot;categoria_producto&quot;].unique()))
+
+# validar canales
+print(&quot;\nCanales Orders:&quot;)
+print(sorted(orders_clean[&quot;fuente_referencia&quot;].unique()))
+
+print(&quot;\nCanales Marketing:&quot;)
+print(sorted(marketing_clean[&quot;canal&quot;].unique()))</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- **📦 Exportación**: Una vez finalizada la limpieza, se exportan los datasets para utilizarlos en la última etapa del proyecto.</p></section><section class='cell code'><div class='label'>Code</div><pre><code># exportar datasets limpios
+
+orders_clean.to_csv(&#x27;orders_clean.csv&#x27;, index=False)
+catalog_clean.to_csv(&#x27;catalog_clean.csv&#x27;, index=False)
+marketing_clean.to_csv(&#x27;marketing_clean.csv&#x27;, index=False)
+
+print(&quot;Archivos exportados correctamente:&quot;)
+print(&quot;- orders_clean.csv&quot;)
+print(&quot;- catalog_clean.csv&quot;)
+print(&quot;- marketing_clean.csv&quot;)</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>---</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>## 🔹 Paso 2: Analizar si el negocio es rentable ### 2.1 Cálculo de KPIs principales **🎯 Objetivo:** Calcular los indicadores clave del negocio para evaluar ingresos, costos y rentabilidad. Se usan los 3 datasets (`orders`, `catalog`, `marketing_spend`): **📊 Parte 1: Rentabilidad del negocio** - ¿Cuál es el ingreso total (revenue)? - ¿Cuál es el costo total? - ¿Cuánto se ha invertido en marketing? - ¿El negocio es rentable? (calcular profit) --- **📈 Parte 2: Comportamiento de ventas** - ¿Cuál es el ticket promedio por orden? - ¿Cuál es la cantidad promedio de productos por orden? - ¿Cuál es el producto más vendido? - ¿Cuánto se ha gastado en marketing por canal?</p></section><section class='cell code'><div class='label'>Code</div><pre><code># ==========================================
+# PASO 2.1 - CÁLCULO DE KPIs PRINCIPALES
+# ==========================================
+
+# unir pedidos con el costo unitario del catálogo
+ventas = orders_clean.merge(
+    catalog_clean[
+        [&quot;nombre_producto&quot;, &quot;costo_unitario&quot;]
+    ],
+    on=&quot;nombre_producto&quot;,
+    how=&quot;left&quot;
+)
+
+# calcular costo de producto por pedido
+ventas[&quot;costo_producto&quot;] = (
+    ventas[&quot;cantidad&quot;] * ventas[&quot;costo_unitario&quot;]
+)
+
+# --------------------------
+# PARTE 1: RENTABILIDAD
+# --------------------------
+
+revenue_total = ventas[&quot;monto_total&quot;].sum()
+costo_productos = ventas[&quot;costo_producto&quot;].sum()
+gasto_marketing = marketing_clean[&quot;gasto&quot;].sum()
+
+costo_total = costo_productos + gasto_marketing
+profit = revenue_total - costo_total
+margen_profit = (profit / revenue_total) * 100
+
+print(&quot;=== RENTABILIDAD DEL NEGOCIO ===&quot;)
+print(f&quot;Revenue total: ${revenue_total:,.2f}&quot;)
+print(f&quot;Costo de productos: ${costo_productos:,.2f}&quot;)
+print(f&quot;Gasto de marketing: ${gasto_marketing:,.2f}&quot;)
+print(f&quot;Costo total: ${costo_total:,.2f}&quot;)
+print(f&quot;Profit: ${profit:,.2f}&quot;)
+print(f&quot;Margen de profit: {margen_profit:.2f}%&quot;)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># --------------------------
+# PARTE 2: COMPORTAMIENTO DE VENTAS
+# --------------------------
+
+ticket_promedio = ventas[&quot;monto_total&quot;].mean()
+
+cantidad_promedio = ventas[&quot;cantidad&quot;].mean()
+
+producto_mas_vendido = (
+    ventas.groupby(&quot;nombre_producto&quot;)[&quot;cantidad&quot;]
+    .sum()
+    .sort_values(ascending=False)
+)
+
+marketing_por_canal = (
+    marketing_clean.groupby(&quot;canal&quot;)[&quot;gasto&quot;]
+    .sum()
+    .sort_values(ascending=False)
+)
+
+print(&quot;=== COMPORTAMIENTO DE VENTAS ===&quot;)
+
+print(f&quot;\nTicket promedio por orden: ${ticket_promedio:,.2f}&quot;)
+print(f&quot;Cantidad promedio de productos por orden: {cantidad_promedio:.2f}&quot;)
+
+print(&quot;\nProducto más vendido:&quot;)
+display(producto_mas_vendido.head(1).to_frame(&quot;unidades_vendidas&quot;))
+
+print(&quot;\nGasto de marketing por canal:&quot;)
+display(marketing_por_canal.to_frame(&quot;gasto_marketing&quot;))</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code>print(&quot;=== VALIDACIÓN DEL MERGE ===&quot;)
+print(&quot;Pedidos antes del merge:&quot;, len(orders_clean))
+print(&quot;Pedidos después del merge:&quot;, len(ventas))
+print(&quot;Costos unitarios nulos:&quot;, ventas[&quot;costo_unitario&quot;].isna().sum())</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>### Conclusiones de rentabilidad y comportamiento de ventas El negocio generó ingresos totales por **$9,610,018.94**, frente a un costo total de **$6,700,712.54**, considerando tanto el costo de los productos como la inversión en marketing. Como resultado, se obtuvo una ganancia (profit) de **$2,909,306.40**, equivalente a un margen de **30.27% sobre los ingresos**. Por lo tanto, durante el periodo analizado el negocio fue rentable. La inversión total en marketing fue de **$2,871,843.53**, mientras que el costo asociado a los productos vendidos alcanzó **$3,828,869.01**. En cuanto al comportamiento de compra, el ticket promedio fue de **$385.85 por pedido** y los clientes adquirieron en promedio **1.50 productos por orden**. El producto con mayor volumen de ventas fue **Vacuum-Pro-Black**, con **6,284 unidades vendidas**. La inversión de marketing se distribuyó de manera relativamente equilibrada entre los tres canales. **Social** presentó el mayor gasto con **$976,818.37**, seguido de **Organic** con **$972,650.96** y **Paid Search** con **$922,374.20**. Estos resultados muestran un negocio rentable, aunque el nivel de inversión en marketing es relevante dentro de la estructura de costos. Por ello, el siguiente nivel de análisis debe evaluar qué segmentos, productos y canales generan mayor rentabilidad y no únicamente mayor volumen o inversión.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>---</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>## 🔹 Paso 3: Entender dónde se pierden los usuarios (funnel de conversión) **🎯 Objetivo:** Analizar el comportamiento de los usuarios para identificar en qué etapa del proceso se pierden. ⚙️**Conexión a la base de datos**: Se ejecuta la línea de configuración para conectar con la base de datos y aplicar consultas SQL en la tabla **events**. --- **📊 Parte 1: Construcción del funnel** - ¿Cuántos usuarios llegan a cada etapa del funnel? - Se calcula el número de usuarios únicos por `nombre_evento` - Se ordenan los eventos según el flujo del usuario --- **📉 Parte 2: Análisis de conversión** - Se calcula la tasa de conversión entre cada paso del funnel - Se identifica en qué etapa se pierde la mayor cantidad de usuarios - ¿Cuál es la tasa de conversión final? ---</p></section><section class='cell code'><div class='label'>Code</div><pre><code>import os
+import pandas as pd
+from sqlalchemy import create_engine
+
+# Example only: credentials must be stored as environment variables.
+db_config = {
+    &quot;user&quot;: os.getenv(&quot;DB_USER&quot;),
+    &quot;pwd&quot;: os.getenv(&quot;DB_PASSWORD&quot;),
+    &quot;host&quot;: os.getenv(&quot;DB_HOST&quot;),
+    &quot;port&quot;: os.getenv(&quot;DB_PORT&quot;, &quot;5432&quot;),
+    &quot;db&quot;: os.getenv(&quot;DB_NAME&quot;),
+}
+
+connection_string = &quot;postgresql://{user}:{pwd}@{host}:{port}/{db}&quot;.format(**db_config)
+engine = create_engine(connection_string, connect_args={&quot;sslmode&quot;: &quot;require&quot;})</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Explorar tabla events
+# =========================
+query_events = &#x27;&#x27;&#x27;
+SELECT *
+FROM events;
+&#x27;&#x27;&#x27;
+events = pd.read_sql(query_events, con=engine)
+events.head()</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># PARTE 1: Totales del funnel
+# ======================
+
+query_totals =&#x27;&#x27;&#x27;
+SELECT
+    nombre_evento,
+    COUNT(DISTINCT id_usuario) AS usuarios
+FROM events
+GROUP BY nombre_evento
+ORDER BY usuarios DESC;
+&#x27;&#x27;&#x27;
+
+totals = pd.read_sql(query_totals, con=engine)
+totals</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># PARTE 2: Conversiones
+# ======================
+
+query_conversion = &#x27;&#x27;&#x27;
+WITH funnel AS (
+    SELECT
+        COUNT(DISTINCT CASE WHEN nombre_evento = &#x27;first_visit&#x27; THEN id_usuario END) AS first_visit,
+        COUNT(DISTINCT CASE WHEN nombre_evento = &#x27;add_to_cart&#x27; THEN id_usuario END) AS add_to_cart,
+        COUNT(DISTINCT CASE WHEN nombre_evento = &#x27;select_item&#x27; THEN id_usuario END) AS select_item,
+        COUNT(DISTINCT CASE WHEN nombre_evento = &#x27;begin_checkout&#x27; THEN id_usuario END) AS begin_checkout,
+        COUNT(DISTINCT CASE WHEN nombre_evento = &#x27;add_payment_info&#x27; THEN id_usuario END) AS add_payment_info,
+        COUNT(DISTINCT CASE WHEN nombre_evento = &#x27;purchase&#x27; THEN id_usuario END) AS purchase
+    FROM events
+)
+
+SELECT
+    ROUND(add_to_cart * 100.0 / first_visit, 2) AS conversion_visit_cart,
+    ROUND(select_item * 100.0 / add_to_cart, 2) AS conversion_cart_select,
+    ROUND(begin_checkout * 100.0 / select_item, 2) AS conversion_select_checkout,
+    ROUND(add_payment_info * 100.0 / begin_checkout, 2) AS conversion_checkout_payment,
+    ROUND(purchase * 100.0 / add_payment_info, 2) AS conversion_payment_purchase,
+    ROUND(purchase * 100.0 / first_visit, 2) AS conversion_final
+FROM funnel;
+&#x27;&#x27;&#x27;
+
+conversion = pd.read_sql(query_conversion, con=engine)
+conversion</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>---</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>## 🔹 Paso 4: Evaluar si los usuarios regresan (retención por cohortes) **🎯 Objetivo:** Analizar la retención de usuarios para entender si regresan después de registrarse. **Tablas** - `users` - `user_activity` --- 1. Se identifica la cohorte de cada usuario según el **mes de registro**. 2. Se calcula la retención semanal: cuántos usuarios **se mantienen activos** en cada semana desde su registro. - `retenido_w1`: usuarios activos en la semana 1 - `retenido_w2`: usuarios activos en la semana 2 - `retenido_w3`: usuarios activos en la semana 3 3. Se calcula el porcentaje de retención para cada semana, dividiendo los usuarios retenidos entre los clientes iniciales de la cohorte: - `semana_1`: porcentaje de usuarios retenidos en la semana 1 - `semana_2`: porcentaje de usuarios retenidos en la semana 2 - `semana_3`: porcentaje de usuarios retenidos en la semana 3 Se revisa que la columna de fecha esté en formato correcto (`DATE`). Se realiza la conversión usando: `CAST(fecha_registro AS DATE)`</p></section><section class='cell code'><div class='label'>Code</div><pre><code># Explorar tabla users
+# =========================
+query_users = &#x27;&#x27;&#x27;
+SELECT *
+FROM users;
+&#x27;&#x27;&#x27;
+users = pd.read_sql(query_users, con=engine)
+users.head(3)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Explorar tabla user_activity
+# =========================
+query_user_activity = &#x27;&#x27;&#x27;
+SELECT *
+FROM user_activity;
+&#x27;&#x27;&#x27;
+user_activity = pd.read_sql(query_user_activity, con=engine)
+user_activity.head(3)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code># Retención por cohortes
+# ======================
+
+query_cohort_retention_final = &#x27;&#x27;&#x27;
+WITH cohortes AS (
+    SELECT
+        id_usuario,
+        DATE_TRUNC(&#x27;month&#x27;, CAST(fecha_registro AS DATE)) AS cohorte
+    FROM users
+),
+
+retencion AS (
+    SELECT
+        c.cohorte,
+        c.id_usuario,
+        MAX(CASE
+            WHEN ua.dias_despues_registro = 7 AND ua.activo = 1
+            THEN 1 ELSE 0
+        END) AS retenido_w1,
+        MAX(CASE
+            WHEN ua.dias_despues_registro = 14 AND ua.activo = 1
+            THEN 1 ELSE 0
+        END) AS retenido_w2,
+        MAX(CASE
+            WHEN ua.dias_despues_registro = 21 AND ua.activo = 1
+            THEN 1 ELSE 0
+        END) AS retenido_w3
+    FROM cohortes c
+    LEFT JOIN user_activity ua
+        ON c.id_usuario = ua.id_usuario
+    GROUP BY c.cohorte, c.id_usuario
+)
+
+SELECT
+    cohorte,
+    COUNT(*) AS usuarios_iniciales,
+    SUM(retenido_w1) AS retenido_w1,
+    SUM(retenido_w2) AS retenido_w2,
+    SUM(retenido_w3) AS retenido_w3,
+    ROUND(SUM(retenido_w1) * 100.0 / COUNT(*), 2) AS semana_1,
+    ROUND(SUM(retenido_w2) * 100.0 / COUNT(*), 2) AS semana_2,
+    ROUND(SUM(retenido_w3) * 100.0 / COUNT(*), 2) AS semana_3
+FROM retencion
+GROUP BY cohorte
+ORDER BY cohorte;
+&#x27;&#x27;&#x27;
+
+# Ejecutar la consulta
+cohorte_final = pd.read_sql(query_cohort_retention_final, con=engine)
+cohorte_final</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>---</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>## 🔹 Paso 5: Validar si los cambios generan impacto (test estadístico) 🎯 **Objetivo:** Evaluar si la modificación en la UI del checkout impacta la **tasa de conversión de compra**. --- 1. **Analizar el dataset** `experiment_checkout_ui.csv` para identificar la métrica principal **conversion**. - La métrica **conversion** es 1 si el usuario completó la compra, 0 si no. 2. **Plantear la hipótesis estadística** 3. **Aplicar el test estadístico adecuado** 4. **Interpretar el resultado**</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>--- Hipótesis estadística - **H₀ (Hipótesis nula):** ... - **H₁ (Hipótesis alternativa):** ... **Test estadístico:** ... **Nivel de significancia alpha:** ...</p></section><section class='cell code'><div class='label'>Code</div><pre><code>import pandas as pd
+
+# Cargar dataset del experimento A/B
+experiment = pd.read_csv(
+    &#x27;https://practicum-content.s3.amazonaws.com/datasets/experiment_checkout_ui.csv&#x27;
+)
+
+# Convertir timestamp a fecha
+experiment[&#x27;timestamp&#x27;] = pd.to_datetime(experiment[&#x27;timestamp&#x27;])
+
+print(&quot;=== INFORMACIÓN DEL EXPERIMENTO ===&quot;)
+print(&quot;Dimensiones:&quot;, experiment.shape)
+
+print(&quot;\n=== PRIMERAS FILAS ===&quot;)
+display(experiment.head())
+
+print(&quot;\n=== VALORES NULOS ===&quot;)
+display(experiment.isnull().sum().to_frame(&quot;nulos&quot;))
+
+print(&quot;\n=== DISTRIBUCIÓN POR VARIANTE ===&quot;)
+display(experiment[&#x27;variante&#x27;].value_counts().to_frame(&quot;usuarios&quot;))
+
+print(&quot;\n=== CONVERSIÓN POR VARIANTE ===&quot;)
+display(
+    experiment.groupby(&#x27;variante&#x27;)[&#x27;convirtio&#x27;]
+    .agg([&#x27;count&#x27;, &#x27;sum&#x27;, &#x27;mean&#x27;])
+    .rename(columns={
+        &#x27;count&#x27;: &#x27;usuarios&#x27;,
+        &#x27;sum&#x27;: &#x27;conversiones&#x27;,
+        &#x27;mean&#x27;: &#x27;tasa_conversion&#x27;
+    })
+)</code></pre></section><section class='cell code'><div class='label'>Code</div><pre><code>from statsmodels.stats.proportion import proportions_ztest
+
+# Conversiones de cada grupo
+conversiones = [
+    experiment.loc[experiment[&#x27;variante&#x27;] == &#x27;control&#x27;, &#x27;convirtio&#x27;].sum(),
+    experiment.loc[experiment[&#x27;variante&#x27;] == &#x27;tratamiento&#x27;, &#x27;convirtio&#x27;].sum()
+]
+
+# Número de usuarios de cada grupo
+usuarios = [
+    (experiment[&#x27;variante&#x27;] == &#x27;control&#x27;).sum(),
+    (experiment[&#x27;variante&#x27;] == &#x27;tratamiento&#x27;).sum()
+]
+
+# Test Z de dos proporciones
+z_stat, p_value = proportions_ztest(
+    count=conversiones,
+    nobs=usuarios,
+    alternative=&#x27;two-sided&#x27;
+)
+
+print(&quot;=== TEST A/B DE CONVERSIÓN ===&quot;)
+print(f&quot;Conversiones control: {conversiones[0]} / {usuarios[0]}&quot;)
+print(f&quot;Conversiones tratamiento: {conversiones[1]} / {usuarios[1]}&quot;)
+print(f&quot;Estadístico Z: {z_stat:.4f}&quot;)
+print(f&quot;P-value: {p_value:.4f}&quot;)
+print(f&quot;Alpha: {0.05}&quot;)</code></pre></section><section class='cell markdown'><div class='label'>Markdown</div><p>### Interpretación del experimento El grupo control obtuvo una tasa de conversión de 15.69%, mientras que el grupo tratamiento alcanzó 16.29%, una diferencia de aproximadamente 0.60 puntos porcentuales a favor del tratamiento. Sin embargo, el test Z de dos proporciones obtuvo un p-value de 0.4161, superior al nivel de significancia establecido (α = 0.05). Por lo tanto, no se rechaza la hipótesis nula. No existe evidencia estadísticamente significativa para afirmar que el cambio en la interfaz del checkout haya generado una mejora en la tasa de conversión. ### Recomendación No se recomienda implementar el cambio de UI basándose únicamente en los resultados actuales. Se sugiere continuar evaluando la modificación mediante experimentos adicionales o una muestra mayor antes de tomar una decisión definitiva.</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>---</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>## 🔹 Paso 6: Comunicar los resultados (Dashboard en BI) 🎯 **Objetivo**: Crear un dashboard que muestre de manera clara y visual los resultados del análisis de ventas, costos, marketing y conversión. Se usarán los CSVs limpios del Paso 1: - `orders_clean.csv` - `catalog_clean.csv` - `marketing_clean.csv` --- 1️⃣ Preparación de los datos 1. Cargar los CSVs en Power BI o Tableau. 2. Revisar relaciones: - `orders.nombre_producto` → `catalog.nombre_producto` - `orders.fecha_pedido` → tabla de fechas (crear calendario para análisis temporal) - `orders.fecha_pedido` → `dim_fecha.date` 3. Crear columnas calculadas necesarias 4. Crear tabla de fechas para poder calcular comparaciones YTD, YoY o períodos anteriores (`Previous Year`, `Previous Month`). --- 2️⃣ Dashboard 1: Overview Ejecutivo **KPIs principales a mostrar:** - Revenue total - Profit total - Gasto total en marketing - Ticket promedio - Cantidad promedio de productos por orden **Visualizaciones sugeridas:** - Tarjetas KPI para revenue, profit y gasto marketing - Gráfico de líneas: evolución mensual de revenue o profit - Gráfico de líneas YTD - Gráfico de barras: revenue y profit por producto o categoría --- 3️⃣ Dashboard 2: Detalle / Drill-through **Objetivo:** Permitir explorar los datos desde el KPI general hasta cada orden o producto. **Visualizaciones sugeridas:** - Tabla detallada de órdenes con: - producto, cantidad, revenue, cost, profit - color condicional (profit negativo en rojo, positivo en verde) - Gráfico de barras por producto con medida `cantidad vendida` - Drill-through: seleccionar un producto y ver todos los pedidos relacionados - Filtros por fecha, categoría de producto, etc</p></section><section class='cell markdown'><div class='label'>Markdown</div><p>---</p></section></main>
+  </body>
+</html>
